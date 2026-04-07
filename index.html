@@ -2,141 +2,1125 @@
 <html lang="en">
 <head>
   <meta name="robots" content="noindex, nofollow">
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-  <title>Reset – Your Daily Peace System</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
-  
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Reset – Your Daily Peace System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+html,body{width:100%;min-height:100%}
+#root{min-height:100vh}
+button,textarea{font-family:'DM Sans',sans-serif;outline:none;border:none;cursor:pointer}
+textarea{resize:none}
 
-  <style>
-    /* FIX: Prevent white blink on navigation */
-    :root { --bg: #0A0F0D; }
-    html, body { 
-      background-color: var(--bg) !important; 
-      margin: 0; 
-      padding: 0; 
-      width: 100%; 
-      height: 100%; 
-      -webkit-backface-visibility: hidden; 
-      -webkit-perspective: 1000;
-    }
-    #root { 
-      background-color: var(--bg); 
-      min-height: 100vh; 
-      -webkit-backface-visibility: hidden; 
-    }
+/* Core animations */
+@keyframes fadeIn  {from{opacity:0}to{opacity:1}}
+@keyframes fadeOut {from{opacity:1}to{opacity:0}}
+@keyframes riseIn  {from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp {from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes float   {0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes moonSway{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(4deg)}}
+@keyframes pulse   {0%,100%{opacity:.12}50%{opacity:.88}}
+@keyframes ripple  {0%{transform:scale(.7);opacity:.5}100%{transform:scale(2.4);opacity:0}}
+@keyframes orbIn   {0%,100%{transform:scale(1)}50%{transform:scale(1.55)}}
+@keyframes glow    {0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 50px 12px rgba(82,109,106,.13)}}
+@keyframes w1{0%,100%{height:4px}50%{height:18px}}
+@keyframes w2{0%,100%{height:4px}35%{height:12px}70%{height:7px}}
+@keyframes w3{0%,100%{height:4px}45%{height:20px}}
+@keyframes w4{0%,100%{height:4px}25%{height:11px}65%{height:16px}}
+@keyframes w5{0%,100%{height:4px}60%{height:9px}80%{height:15px}}
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    button { font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; outline: none; }
-    @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(82, 109, 106, 0.1); } 50% { box-shadow: 0 0 40px rgba(82, 109, 106, 0.3); } }
-  </style>
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(82,109,106,.2);border-radius:3px}
+</style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useRef } = React;
-const C = { bg: "#0A0F0D", surface: "#141A18", border: "#232A28", green: "#526D6A", greenL: "#8FAFA8", text: "#E8E2D8", muted: "#A8A298" };
+const {useState,useEffect,useRef,useCallback}=React;
 
-const AUDIO_URL = "https://assets.mixkit.co/music/preview/mixkit-forest-rain-ambience-1210.mp3";
+/* ═══════════════════════════ DATA ═══════════════════════════ */
+const GRATITUDE=[
+  {title:"The Gift of Today",      text:"Thank you, God, for another morning. Not everyone woke up today — I did. That alone is something I did not earn.",                  prompt:"What's one small thing today that usually goes unnoticed?"},
+  {title:"The People Around You",  text:"Thank you for the people in my life who show up in quiet ways — not always with words, but with presence.",                         prompt:"Who made your life a little easier this week?"},
+  {title:"Your Body Carried You",  text:"Thank you for a body that breathes without me asking. For a heart that kept going through every hard season.",                      prompt:"What has your body handled lately that deserves a thank you?"},
+  {title:"The Hard Days",          text:"Thank you even for the hard days. They proved I was stronger than I believed. I made it through every single one.",                  prompt:"Which difficult moment this year taught you something real?"},
+  {title:"Clean Water & Shelter",  text:"Thank you for clean water. For shelter from the storm. For ordinary comforts I walk past without truly seeing.",                    prompt:"Name one comfort you've been taking for granted."},
+  {title:"This Breath",            text:"Right now, I am breathing. That means I am alive. That means there is still time — for healing, for love, for becoming.",           prompt:"If you had more time, what would you do more of?"},
+  {title:"The Learning",           text:"Thank you for every mistake that taught me something. For every loss that showed me what truly mattered.",                           prompt:"What do you know now that you didn't know a year ago?"},
+  {title:"Sunlight",               text:"Thank you for the light that finds its way in — through windows, through people, through unexpected moments of beauty.",             prompt:"What small moment of beauty did you witness today?"},
+  {title:"Second Chances",         text:"Thank you for every new day — a fresh page. Not a reminder of what I failed, but a chance to begin again.",                         prompt:"What would you do differently if today were a second chance?"},
+  {title:"Rest",                   text:"Thank you for sleep. For the quiet that holds us between one day and the next. For rest that asks nothing of us.",                   prompt:"When did you last truly rest — mind and body both?"},
+  {title:"Kindness",               text:"Thank you for every act of kindness I've received — the ones I remember and the ones I've forgotten. They all landed.",              prompt:"Who was unexpectedly kind to you recently?"},
+  {title:"Music",                  text:"Thank you for music. For a song that arrived at exactly the right moment. For the feeling of being understood by a stranger's melody.", prompt:"What song has meant the most to you lately?"},
+  {title:"Growth",                 text:"Thank you for who I am becoming. Even slowly. Even imperfectly. I am not the same person I was a year ago.",                         prompt:"How are you different from who you were 12 months ago?"},
+  {title:"Nourishment",            text:"Thank you for food on the table. For the simple act of a meal. For energy that powers the life I'm building.",                      prompt:"When did you last eat something that made you feel truly grateful?"},
+  {title:"Hands That Work",        text:"Thank you for hands that can work, create, hold, and reach. For the ability to build something from nothing.",                      prompt:"What have your hands made lately that you're proud of?"},
+  {title:"Someone Who Listened",   text:"Thank you for the person who listened when I needed to speak. For the one who made space for me.",                                  prompt:"Who do you feel truly heard by?"},
+  {title:"The Small Joys",         text:"Thank you for the small joys I almost missed — a warm cup, a good laugh, the feeling of sheets on tired skin.",                    prompt:"Name three small things that brought you quiet joy this week."},
+  {title:"My Mind",                text:"Thank you for a mind that questions, wonders, and seeks. Even when it worries too much, it shows it cares.",                        prompt:"What is your mind most curious about right now?"},
+  {title:"Healing",                text:"Thank you for healing — physical, emotional, invisible. For the wounds that are slowly closing, even when I can't see them.",        prompt:"What part of you is healing right now, even if slowly?"},
+  {title:"Seasons That Change",    text:"Thank you that seasons change. That nothing stays the same forever — not the hard parts, not the waiting.",                          prompt:"What season of life are you in right now?"},
+  {title:"Laughter",               text:"Thank you for real laughter. The kind that catches you off guard. The kind that reminds you everything is not heavy.",              prompt:"When did you last laugh without holding back?"},
+  {title:"Hope",                   text:"Thank you for hope. For the small voice that says things can be different. For the part of me that keeps getting up.",              prompt:"What are you quietly hoping for right now?"},
+  {title:"Connection",             text:"Thank you for the connections that sustain me — family, friends, strangers who became more. For every relationship that held.",      prompt:"Who is one person you want to reach out to today?"},
+  {title:"Time",                   text:"Thank you for time. For hours that let me think, rest, build, and change. For every minute that hasn't run out yet.",               prompt:"How do you want to spend your time differently this week?"},
+  {title:"Nature",                 text:"Thank you for the world outside — sky, trees, wind, water. For the simple truth that something bigger is still here.",              prompt:"When did you last stop to notice something in nature?"},
+  {title:"Creativity",             text:"Thank you for the urge to create — to write, cook, build, draw, dream. For the part of me that still wants to make something.",    prompt:"What do you wish you made more time to create?"},
+  {title:"Forgiveness",            text:"Thank you for the capacity to forgive — myself and others. For the relief that comes when I stop carrying what isn't mine.",        prompt:"Is there something you're ready to set down today?"},
+  {title:"Memories",               text:"Thank you for memories that still make me smile. For the ones that remind me: I have been happy before. I will be again.",          prompt:"What's a memory that still warms you when you visit it?"},
+  {title:"Peace",                  text:"Thank you for every moment of genuine peace I have felt. For the proof that it exists. For the certainty it returns.",              prompt:"Where do you feel most at peace?"},
+  {title:"This Moment",            text:"Thank you for now. For this exact moment — however ordinary or hard — because I am here in it, and that is everything.",             prompt:"If this moment was enough, what would that change?"},
+  {title:"The Journey",            text:"Thank you for the journey — not the destination, but the path. Every step shaped something in me.",                                 prompt:"What step have you taken recently that you're proud of?"},
+];
 
-function App() {
-  const [view, setView] = useState('checkin');
-  const [step, setStep] = useState(0);
-  const audioRef = useRef(new Audio(AUDIO_URL));
+const AFFIRMATIONS=[
+  "I am allowed to take up space and move at my own pace.",
+  "I do not need to earn rest. Rest is my right.",
+  "I am doing better than I think. I have survived every hard day so far.",
+  "I am not behind. I am exactly where I need to be right now.",
+  "I choose to release what I cannot control and breathe into what I can.",
+  "My feelings are valid. They are not permanent. They are just visiting.",
+  "I am worthy of peace — not because I earned it, but because I exist.",
+  "I am building something real. It takes time. That's okay.",
+  "I give myself permission to not have it all figured out today.",
+  "Every time I breathe and choose to continue, I am being brave.",
+  "I trust that I have what I need to get through today.",
+  "I am not my worries. I am the one noticing them.",
+  "There is strength in gentleness — especially toward myself.",
+  "I am allowed to ask for help. That is wisdom, not weakness.",
+  "Today, I show up as I am. That is more than enough.",
+  "My peace matters. I will protect it.",
+  "I have done hard things before. I can do hard things again.",
+  "I am growing even when it's invisible, even when it's slow.",
+  "I choose to be kind to myself today, in the small moments.",
+  "I am the calm beneath the storm. It is always there.",
+  "I deserve good things — not someday, but now.",
+  "What I feel is real. What I need matters. I will honor both.",
+  "I am not the worst thought I've had about myself.",
+  "Each breath I take is a fresh beginning.",
+  "I let go of the version of today I imagined. This version is enough.",
+  "I release perfectionism. Progress is the goal.",
+  "I am seen. I am loved. I belong here.",
+  "I will not rush my healing. Good things take time.",
+  "Today's difficulties are not permanent. They are passing through.",
+  "I am grateful for the small things — they are not small at all.",
+  "My story is not over. This is just one chapter.",
+];
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    audio.loop = true;
-    audio.volume = 0.4;
-    return () => { audio.pause(); };
-  }, []);
+const CALM_STEPS=[
+  {title:"Breathe",        sub:"Slow your nervous system down",      type:"breath"},
+  {title:"Release",        sub:"Let go of tension in your body",     type:"body",
+   text:"Start at the very top...\n\n• Let your forehead soften\n• Unclench your jaw — let your tongue drop\n• Drop your shoulders away from your ears\n• Open your hands, uncurl your fingers\n• Feel your feet heavy and flat on the floor\n\nNotice how much your body was holding. Let it go."},
+  {title:"Ground Yourself",sub:"Come back to this exact moment",     type:"ground",
+   text:"Look around slowly. Find:\n\n5 things you can see right now\n4 things you can physically feel\n3 sounds you can hear\n2 things you can smell\n1 slow, complete breath\n\nYou are here. This room is real. You are safe inside this moment."},
+  {title:"Let One Thing Go",sub:"You don't have to carry everything",type:"release",
+   text:"Think of one thing weighing on you right now.\n\nYou don't have to solve it. You don't have to fix it.\n\nJust acknowledge it exists — and then choose, just for these next few minutes, to set it down outside the door.\n\nBreathe in... and on the exhale, let it go."},
+  {title:"Your Affirmation",sub:"Read this slowly. Read it again.",  type:"affirm"},
+];
 
-  const startPeace = (index) => {
-    audioRef.current.play().catch(() => {});
-    setStep(index);
-    setView('response');
-    window.scrollTo(0, 0);
-  };
+const NIGHT_STEPS=[
+  {title:"Set down today.",      body:"Whatever happened today — the mistakes, the unfinished things, the conversations that didn't go right — they don't travel with you into sleep.\n\nSet them outside the door. You can pick them up tomorrow if you need to. Tonight, you rest.",icon:"🌙"},
+  {title:"Soften your body.",    body:"Starting from the top:\n\n• Relax your face completely\n• Drop your shoulders\n• Let your stomach soften\n• Feel your legs grow heavy\n• Let your arms rest with no effort\n\nYou are held. You are horizontal. You don't have to do anything.",icon:"✦"},
+  {title:"Breathe for sleep.",   body:"The 4-7-8 pattern naturally activates your body's rest mode.\n\nBreath in for 4... hold for 7... breathe out completely for 8.\n\nThree full cycles. Your body already knows what to do.",icon:"〇",type:"nightBreath"},
+  {title:"One gratitude.",       body:"Think of one real thing from today you are grateful for.\n\nIt doesn't have to be big. A warm drink. A moment of quiet. The fact that you made it through.\n\nThank God for it. Hold it in your chest. Let it settle with you.",icon:"✦"},
+  {title:"You are allowed rest.",body:"You are not behind. You did not fail today.\n\nYou showed up — in whatever way you could — and that is enough.\n\nClose your eyes. Your body knows how to sleep. Your mind knows how to let go.\n\nGood night.",icon:"☽"},
+];
 
-  const nav = (v) => { setView(v); window.scrollTo(0, 0); };
+const MEDITATIONS=[
+  {
+    id:"morning",title:"Morning Awakening",tagline:"Begin your day with intention",
+    duration:"5 min",badge:"Morning",sound:"forest",
+    img:"https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=75",
+    grad:"rgba(10,30,15,.6)",
+    segs:[
+      {text:"Find a comfortable position.\n\nClose your eyes gently.",s:12},
+      {text:"Take a slow breath in through your nose...\n\nAnd let it all the way out.",s:14},
+      {text:"Today is a new beginning.\n\nWhatever yesterday held, it is behind you now.\nThis moment is completely fresh.",s:18},
+      {text:"Breathe in again, and as you do, imagine breathing in clarity.\n\nAnd as you breathe out... release anything that doesn't belong to today.",s:18},
+      {text:"Think of one intention for today.\n\nNot a goal. Not a task.\n\nJust one word — one way you want to move through this day.",s:20},
+      {text:"Let that word settle into your body.\n\nYou don't have to figure out how.\nJust carry it gently.",s:18},
+      {text:"Take one final deep breath...\n\nAnd open your eyes when you're ready.\n\nThis day belongs to you.",s:16},
+    ]
+  },
+  {
+    id:"anxiety",title:"Anxiety Relief",tagline:"Immediate calm when you need it",
+    duration:"4 min",badge:"Anytime",sound:"rain",
+    img:"https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=75",
+    grad:"rgba(10,20,15,.65)",
+    segs:[
+      {text:"You're here. That took courage.\n\nLet's start with just one breath.",s:12},
+      {text:"Breathe in slowly... 2... 3... 4...\n\nAnd out slowly... 2... 3... 4... 5... 6.\n\nDo that again.",s:18},
+      {text:"Your nervous system just received a signal:\n\nWe are safe. We are here. We are okay.",s:14},
+      {text:"Whatever you're feeling right now — it is not permanent.\n\nIt is a wave. You are not drowning. You are floating.",s:16},
+      {text:"Look at one thing around you right now.\n\nSomething solid. Something real.\n\nYou are in a safe place.",s:16},
+      {text:"Take another slow breath...\n\nAnd say quietly to yourself:\n\n\"This will pass. It always does.\"",s:18},
+      {text:"You are more capable than your anxiety believes.\n\nYou have gotten through every hard moment before this one.\n\nYou will get through this one too.",s:20},
+    ]
+  },
+  {
+    id:"stillness",title:"Inner Stillness",tagline:"Find the quiet beneath the noise",
+    duration:"5 min",badge:"Anytime",sound:"forest",
+    img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=75",
+    grad:"rgba(8,18,35,.65)",
+    segs:[
+      {text:"Let everything go quiet for a moment.\n\nYou don't have to figure anything out right now.",s:14},
+      {text:"Close your eyes.\n\nJust listen to your breath.\n\nIn... and out. Slow and easy.",s:16},
+      {text:"Beneath all the thoughts, beneath all the noise...\n\nthere is a stillness that has always been there.\n\nIt belongs to you.",s:18},
+      {text:"You don't have to earn access to this stillness.\n\nYou don't have to be perfect to feel it.\n\nIt's already here. It's always here.",s:18},
+      {text:"Let your thoughts come and go like clouds.\n\nYou are not the cloud.\n\nYou are the sky.",s:16},
+      {text:"Breathe into this feeling.\n\nThis is your natural state.\n\nThis is who you are beneath everything.",s:16},
+      {text:"Carry this quiet with you.\n\nNot as something fragile — but as something that cannot be taken.\n\nIt's yours.",s:18},
+    ]
+  },
+  {
+    id:"gratitude",title:"Heart of Gratitude",tagline:"Open your heart to what is good",
+    duration:"5 min",badge:"Anytime",sound:"ocean",
+    img:"https://images.unsplash.com/photo-1439405326854-014607f694d7?w=800&q=75",
+    grad:"rgba(30,15,8,.6)",
+    segs:[
+      {text:"Place one hand gently on your heart.\n\nFeel it beating. That rhythm has never stopped for you.",s:14},
+      {text:"Take a breath and with it, let gratitude begin to move through you.\n\nNot forced. Not performed.\n\nJust allowed.",s:16},
+      {text:"Think of one person in your life who has loved you — even imperfectly.\n\nLet yourself feel that love right now.",s:18},
+      {text:"Think of one moment this week that was good.\n\nIt doesn't have to be big.\n\nA warmth. A laugh. A small mercy.",s:16},
+      {text:"Thank God for it.\n\nNot because everything is perfect.\n\nBut because good things are real, and they deserve to be seen.",s:18},
+      {text:"Let your chest fill with that feeling.\n\nGratitude is not just an emotion.\n\nIt is a way of seeing.",s:16},
+      {text:"Take a deep breath in...\n\nAnd breathe out slowly.\n\nYou have so much inside you. So much that is real and good.",s:18},
+    ]
+  },
+  {
+    id:"evening",title:"Evening Wind-Down",tagline:"Release the day with grace",
+    duration:"6 min",badge:"Evening",sound:"ocean",
+    img:"https://images.unsplash.com/photo-1439405326854-014607f694d7?w=800&q=75",
+    grad:"rgba(25,12,5,.65)",
+    segs:[
+      {text:"The day is done.\n\nYou made it. Whatever it held — you made it through.",s:14},
+      {text:"Take a slow breath in...\n\nAnd as you breathe out, let the day begin to soften.",s:14},
+      {text:"You did what you could today.\n\nSome things went well. Some didn't.\n\nAll of it was enough.",s:16},
+      {text:"Think of one thing that went right today.\n\nEven something small.\n\nHold it for a moment.",s:16},
+      {text:"Now think of something you're setting down tonight.\n\nA worry. A regret. A conversation that still feels unfinished.\n\nYou don't have to carry it to bed.",s:20},
+      {text:"Breathe in...\n\nAnd breathe out, releasing it completely.\n\nTomorrow can hold what it needs to hold.",s:16},
+      {text:"Let your body grow heavy.\n\nLet your mind grow quiet.\n\nYou've done enough for today.\n\nRest now.",s:18},
+      {text:"Good night.\n\nThank God for this day.\n\nFor the breath that carried you through it.",s:16},
+    ]
+  },
+  {
+    id:"sleep",title:"Deep Sleep Journey",tagline:"Drift gently into rest",
+    duration:"8 min",badge:"Night",sound:"rain",
+    img:"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=75",
+    grad:"rgba(3,3,18,.7)",
+    segs:[
+      {text:"You are safe.\n\nYou are horizontal.\n\nYou are allowed to sleep.",s:14},
+      {text:"Let your eyes close.\n\nLet your breath slow.\n\nThere is nothing you need to do.",s:16},
+      {text:"Breathe in for 4...\n\nHold for 7...\n\nBreathe out for 8...",s:20},
+      {text:"Your body is growing heavier with each breath.\n\nYour muscles are letting go one by one.\n\nYou don't have to hold anything.",s:18},
+      {text:"Let your thoughts drift by like gentle clouds.\n\nYou don't need to follow them.\n\nJust watch them pass.",s:18},
+      {text:"You are safe in this moment.\n\nThe world will continue while you sleep.\n\nYou are allowed to leave it for a while.",s:18},
+      {text:"Feel the weight of your body being held.\n\nYou don't have to hold yourself up anymore.\n\nLet go completely.",s:18},
+      {text:"Breathe in gently...\n\nAnd breathe out... slowly... completely...\n\nSleep is coming.",s:20},
+      {text:"Thank God for this rest.\n\nFor this quiet.\n\nFor this safe place to lay your head.\n\nGood night.",s:20},
+    ]
+  },
+];
 
-  const EMOTIONS = [
-    { id: "overwhelmed", label: "Overwhelmed", msg: "Slow down.", sub: "One breath is enough." },
-    { id: "stressed", label: "Stressed", msg: "Release the pressure.", sub: "You are doing okay." },
-    { id: "tired", label: "Mentally Tired", msg: "Rest is allowed.", sub: "Your mind needs a break." },
-    { id: "calm", label: "Calm", msg: "Peace is yours.", sub: "Let's keep it that way." }
-  ];
+const EMOTIONS=[
+  {id:"overwhelmed",label:"Overwhelmed",  sub:"Too much at once"},
+  {id:"stressed",   label:"Stressed",     sub:"Tension, pressure building"},
+  {id:"tired",      label:"Mentally Tired",sub:"Drained, foggy, flat"},
+  {id:"calm",       label:"Calm",         sub:"Just checking in"},
+];
 
-  return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', color: C.text, backgroundColor: C.bg }}>
-      
-      {view === 'checkin' && (
-        <div style={{ padding: '60px 28px' }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '38px', textAlign: 'center', marginBottom: '40px' }}>How is your mind?</h2>
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {EMOTIONS.map((e, i) => (
-              <button key={e.id} onClick={() => startPeace(i)} style={{ background: C.surface, padding: '24px', borderRadius: '24px', border: `1px solid ${C.border}`, color: C.text, fontSize: '18px', textAlign: 'left' }}>{e.label}</button>
-            ))}
-          </div>
-        </div>
-      )}
+const RESP={
+  overwhelmed:{msg:"You don't have to solve everything right now.",sub:"One breath. One step. That's all this moment needs.",btn:"Start 5-Step Reset",next:"reset5"},
+  stressed:   {msg:"Stress means you care about something.",       sub:"Let's give that energy somewhere to land.",          btn:"Start 5-Step Reset",next:"reset5"},
+  tired:      {msg:"Your mind has worked hard today.",             sub:"You have permission to rest. Right now.",            btn:"Start Gentle Reset",next:"reset5"},
+  calm:       {msg:"Good. Let's protect and deepen that.",         sub:"A moment of calm is worth honoring.",               btn:"Open Today's Gratitude",next:"gratitude"},
+};
 
-      {view === 'response' && (
-        <div style={{ padding: '80px 28px', textAlign: 'center' }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '42px' }}>{EMOTIONS[step].msg}</h2>
-          <p style={{ color: C.muted, margin: '20px 0 60px', fontSize: '18px' }}>{EMOTIONS[step].sub}</p>
-          <button onClick={() => nav('reset')} style={{ width: '100%', height: '64px', background: C.green, borderRadius: '22px', fontSize: '17px', color: C.bg, fontWeight: '600' }}>Start Reset</button>
-        </div>
-      )}
-
-      {view === 'reset' && (
-        <div style={{ padding: '60px 28px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ color: C.greenL, letterSpacing: '0.2em', fontSize: '12px', marginBottom: '40px' }}>BREATHING IN SYNC WITH RAIN</p>
-          <BreathOrb />
-          <button onClick={() => nav('home')} style={{ width: '100%', height: '64px', background: C.surface, border: `1px solid ${C.border}`, color: C.text, borderRadius: '22px', marginTop: '40px' }}>Finish</button>
-        </div>
-      )}
-
-      {view === 'home' && (
-        <div style={{ padding: '60px 24px' }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '32px', marginBottom: '30px' }}>Welcome to Peace.</h2>
-          <button onClick={() => nav('checkin')} style={{ width: '100%', padding: '24px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: '24px', color: C.text, textAlign: 'left' }}>
-            <p style={{ fontSize: '18px' }}>Daily Check-in</p>
-            <p style={{ fontSize: '14px', color: C.muted }}>Return to center</p>
-          </button>
-        </div>
-      )}
-    </div>
-  );
+/* ═══════════════ SOUND ENGINE ═══════════════ */
+function useSoundEngine(){
+  const ctxRef=useRef(null);const srcRef=useRef(null);const gainRef=useRef(null);
+  const stop=useCallback(()=>{
+    try{
+      if(gainRef.current&&ctxRef.current){
+        gainRef.current.gain.cancelScheduledValues(ctxRef.current.currentTime);
+        gainRef.current.gain.linearRampToValueAtTime(0,ctxRef.current.currentTime+1.1);
+      }
+      setTimeout(()=>{try{srcRef.current&&srcRef.current.stop();}catch(e){}srcRef.current=null;},1200);
+    }catch(e){}
+  },[]);
+  const start=useCallback((type)=>{
+    try{if(gainRef.current&&ctxRef.current){gainRef.current.gain.cancelScheduledValues(ctxRef.current.currentTime);gainRef.current.gain.linearRampToValueAtTime(0,ctxRef.current.currentTime+0.3);setTimeout(()=>{try{srcRef.current&&srcRef.current.stop();}catch(e){}},400);}
+    }catch(e){}
+    setTimeout(()=>{
+      try{
+        if(ctxRef.current&&ctxRef.current.state!=="closed"){try{ctxRef.current.close();}catch(e){}}
+        ctxRef.current=new(window.AudioContext||window.webkitAudioContext)();
+        const ctx=ctxRef.current;
+        if(ctx.state==="suspended")ctx.resume();
+        const sr=ctx.sampleRate;
+        const buf=ctx.createBuffer(2,8*sr,sr);
+        for(let ch=0;ch<2;ch++){
+          const d=buf.getChannelData(ch);
+          let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+          for(let i=0;i<d.length;i++){
+            const w=Math.random()*2-1;
+            b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.96900*b2+w*.1538520;
+            b3=.86650*b3+w*.3104856;b4=.55000*b4+w*.5329522;b5=-.7616*b5-w*.0168980;
+            d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*0.11;b6=w*.115926;
+          }
+        }
+        const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;
+        const f1=ctx.createBiquadFilter();const f2=ctx.createBiquadFilter();
+        if(type==="rain"){f1.type="lowpass";f1.frequency.value=1100;f1.Q.value=0.5;f2.type="highpass";f2.frequency.value=80;f2.Q.value=0.5;}
+        else if(type==="ocean"){f1.type="lowpass";f1.frequency.value=320;f1.Q.value=2.5;f2.type="highpass";f2.frequency.value=25;f2.Q.value=0.5;}
+        else{f1.type="bandpass";f1.frequency.value=680;f1.Q.value=0.4;f2.type="lowpass";f2.frequency.value=1900;f2.Q.value=0.5;}
+        const gain=ctx.createGain();gain.gain.value=0;
+        src.connect(f1);f1.connect(f2);f2.connect(gain);gain.connect(ctx.destination);
+        src.start(0);
+        gain.gain.linearRampToValueAtTime(0.17,ctx.currentTime+2.2);
+        srcRef.current=src;gainRef.current=gain;
+      }catch(e){console.error(e);}
+    },480);
+  },[]);
+  return{start,stop};
 }
 
-function BreathOrb() {
-  const [ph, setPh] = useState(0);
-  const [cnt, setCnt] = useState(4);
-  const timer = useRef(null);
-  useEffect(() => {
-    let c = ph === 2 ? 6 : 4; setCnt(c); clearInterval(timer.current);
-    timer.current = setInterval(() => {
-      c--; if (c <= 0) { clearInterval(timer.current); setPh((p) => (p + 1) % 3); } else setCnt(c);
-    }, 1000);
-    return () => clearInterval(timer.current);
-  }, [ph]);
-  return (
-    <div style={{ width: 200, height: 200, borderRadius: '50%', border: `2px solid ${C.green}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'glow 4s infinite' }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '64px' }}>{cnt}</div>
-        <div style={{ fontSize: '12px', letterSpacing: '0.2em', color: C.greenL }}>{ph === 0 ? "IN" : ph === 1 ? "HOLD" : "OUT"}</div>
+/* ═══════════════ HELPERS ═══════════════ */
+function Waveform({active,color}){
+  const dl=["0s",".14s",".28s",".07s",".21s"];
+  return(<div style={{display:"flex",alignItems:"center",gap:"2.5px",height:"22px"}}>
+    {["w1","w2","w3","w4","w5"].map((a,i)=>(
+      <div key={i} style={{width:"3px",height:"5px",borderRadius:"3px",background:color,
+        animation:active?`${a} .72s ease-in-out infinite ${dl[i]}`:"none",opacity:active?1:.28,transition:"opacity .3s"}}/>
+    ))}
+  </div>);
+}
+
+/* Transition overlay — instant cover so no white flash between screens */
+function Trans({bg}){
+  return <div style={{position:"fixed",inset:0,background:bg,zIndex:900,
+    animation:"fadeOut .38s ease .04s forwards",pointerEvents:"none"}}/>;
+}
+
+function NatureCard({src,grad,children,style={},onClick}){
+  return(<div onClick={onClick} style={{position:"relative",borderRadius:"24px",overflow:"hidden",cursor:onClick?"pointer":"default",...style}}>
+    <img src={src} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}} onError={e=>e.target.style.display="none"}/>
+    <div style={{position:"absolute",inset:0,background:grad}}/>
+    <div style={{position:"relative",zIndex:2}}>{children}</div>
+  </div>);
+}
+
+/* ═══════════════ BREATH ORB ═══════════════ */
+function BreathOrb({c,small}){
+  const PH=[{l:"Breathe in",d:4,s:1.5},{l:"Hold",d:4,s:1.5},{l:"Breathe out",d:6,s:1}];
+  const [ph,setPh]=useState(0);const [cnt,setCnt]=useState(4);const [rnd,setRnd]=useState(1);
+  const ref=useRef(null);const rr=useRef(1);
+  useEffect(()=>{
+    let c2=PH[ph].d;setCnt(c2);clearInterval(ref.current);
+    ref.current=setInterval(()=>{c2--;if(c2<=0){clearInterval(ref.current);const nx=(ph+1)%3;if(nx===0){rr.current++;setRnd(rr.current);if(rr.current>3){clearInterval(ref.current);return;}}setPh(nx);}else setCnt(c2);},1000);
+    return()=>clearInterval(ref.current);
+  },[ph]);
+  const cur=PH[ph];const sz=small?130:160;
+  return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",margin:"24px 0"}}>
+    <div style={{position:"relative",width:sz,height:sz,display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{position:"absolute",inset:0,borderRadius:"50%",border:`1px solid ${c.green}18`,animation:"ripple 3.5s ease-out infinite"}}/>
+      <div style={{position:"absolute",inset:"10px",borderRadius:"50%",border:`1px solid ${c.green}12`,animation:"ripple 3.5s ease-out .9s infinite"}}/>
+      <div style={{position:"absolute",inset:0,borderRadius:"50%",border:`1.5px solid ${c.green}45`,
+        background:`radial-gradient(circle at 38% 38%, ${c.green}26, ${c.green}06)`,
+        transform:`scale(${cur.s})`,transition:`transform ${cur.d}s ease-in-out`,animation:"glow 5s ease-in-out infinite"}}/>
+      <div style={{position:"relative",zIndex:2,textAlign:"center"}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:small?"42px":"50px",fontWeight:300,color:c.text,lineHeight:1}}>{cnt}</div>
+        <div style={{fontSize:"10px",color:c.greenL,letterSpacing:".06em",marginTop:"4px",fontWeight:500}}>{cur.l.toUpperCase()}</div>
       </div>
     </div>
+    <div style={{display:"flex",gap:"6px",marginTop:"12px"}}>
+      {[1,2,3].map(r=><div key={r} style={{width:"22px",height:"2px",borderRadius:"1px",background:r<=rnd?c.green:c.border,transition:"background .5s"}}/>)}
+    </div>
+  </div>);
+}
+
+/* ═══════════════ NIGHT BREATH ═══════════════ */
+function NightBreath(){
+  const PH=[{l:"Breathe in",d:4,s:1.4},{l:"Hold",d:7,s:1.4},{l:"Breathe out",d:8,s:1}];
+  const [ph,setPh]=useState(0);const [cnt,setCnt]=useState(4);
+  const ref=useRef(null);
+  useEffect(()=>{
+    let c2=PH[ph].d;setCnt(c2);clearInterval(ref.current);
+    ref.current=setInterval(()=>{c2--;if(c2<=0){clearInterval(ref.current);const nx=(ph+1)%3;setPh(nx);}else setCnt(c2);},1000);
+    return()=>clearInterval(ref.current);
+  },[ph]);
+  const cur=PH[ph];
+  return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",margin:"16px 0"}}>
+    <div style={{position:"relative",width:"120px",height:"120px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{position:"absolute",inset:0,borderRadius:"50%",border:"1px solid rgba(143,175,168,.18)",animation:"ripple 4s ease-out infinite"}}/>
+      <div style={{position:"absolute",inset:0,borderRadius:"50%",border:"1.5px solid rgba(143,175,168,.38)",
+        background:"radial-gradient(circle,rgba(143,175,168,.18),transparent)",
+        transform:`scale(${cur.s})`,transition:`transform ${cur.d}s ease-in-out`}}/>
+      <div style={{position:"relative",zIndex:2,textAlign:"center"}}>
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"42px",fontWeight:300,color:"#E8E2D8",lineHeight:1}}>{cnt}</div>
+        <div style={{fontSize:"10px",color:"#8FAFA8",letterSpacing:".06em",marginTop:"4px"}}>{cur.l.toUpperCase()}</div>
+      </div>
+    </div>
+    <p style={{fontSize:"13px",color:"#545470",marginTop:"10px"}}>4 · 7 · 8 sleep breathing</p>
+  </div>);
+}
+
+/* ═══════════════ CRISIS MODAL ═══════════════ */
+const CRISIS_DATA=[
+  {t:"Stop.",        b:"Whatever is happening — stop. Don't try to fix it right now. Just stop moving for one moment."},
+  {t:"Breathe.",     b:"Put your hand on your chest. Feel it rise. Breathe in through your nose... slowly out through your mouth. Again."},
+  {t:"Name it.",     b:"What are you feeling right now? Say it out loud or in your mind.\n\n\"I feel ___.\" Naming it is the first step to moving through it."},
+  {t:"You are safe.",b:"This feeling is not permanent. You have felt this before and come through it. You are stronger than this moment."},
+  {t:"One step.",    b:"You don't need to fix everything. Just one tiny thing: drink water, step outside, text someone.\n\nOne step is enough."},
+];
+function CrisisModal({c,onClose}){
+  const [step,setStep]=useState(0);
+  const cs=CRISIS_DATA[step];
+  return(<div onClick={e=>{if(e.target===e.currentTarget)onClose();}}
+    style={{position:"fixed",inset:0,background:"rgba(0,0,0,.84)",zIndex:9999,
+      display:"flex",flexDirection:"column",justifyContent:"flex-end",animation:"fadeIn .22s ease"}}>
+    <div style={{background:c.surface,borderRadius:"28px 28px 0 0",padding:"36px 28px 56px",animation:"slideUp .32s cubic-bezier(.2,.85,.25,1)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"28px"}}>
+        <p style={{fontSize:"11px",letterSpacing:".35em",color:c.green,fontWeight:500}}>IMMEDIATE SUPPORT</p>
+        <button onClick={onClose} style={{background:"transparent",border:"none",fontSize:"26px",color:c.muted,lineHeight:1,padding:"0 6px"}}>×</button>
+      </div>
+      <div style={{display:"flex",gap:"7px",marginBottom:"36px"}}>
+        {CRISIS_DATA.map((_,i)=><div key={i} style={{flex:1,height:"3px",borderRadius:"2px",background:i<=step?c.green:c.border,transition:"background .4s"}}/>)}
+      </div>
+      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,marginBottom:"18px",color:c.text}}>{cs.t}</h2>
+      <p style={{fontSize:"17px",lineHeight:1.82,color:c.muted,marginBottom:"40px",whiteSpace:"pre-line"}}>{cs.b}</p>
+      <button onClick={()=>{if(step<CRISIS_DATA.length-1)setStep(s=>s+1);else onClose();}}
+        style={{background:c.green,color:"#fff",border:"none",padding:"20px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>
+        {step<CRISIS_DATA.length-1?"I'm with you →":"I'm okay now"}
+      </button>
+    </div>
+  </div>);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   5-STEP CALM FLOW — BLINK-FREE via direct DOM ref transitions
+═════════════════════════════════════════════════════════════ */
+function CalmFlow({c,onDone}){
+  const [idx,setIdx]=useState(0);
+  const contentRef=useRef(null);
+  const calmMounted=useRef(false);
+  const aff=AFFIRMATIONS[(new Date().getDate()-1)%AFFIRMATIONS.length];
+
+  /* When idx changes, React updates DOM content, then we fade back in.
+     KEY: opacity is NOT in the JSX style below, so React never resets it.
+     Whatever opacity we set via ref persists through re-renders. */
+  useEffect(()=>{
+    const el=contentRef.current;
+    if(!el) return;
+    if(!calmMounted.current){
+      /* First mount — content should be immediately visible, no animation. */
+      calmMounted.current=true;
+      el.style.opacity="1";
+      el.style.transform="translateX(0)";
+      return;
+    }
+    /* Subsequent step changes:
+       goNext() already set opacity→0 via ref before setIdx().
+       React re-rendered new content. Since opacity is NOT in JSX,
+       React did NOT reset it — it stayed at 0. Now fade the new content in. */
+    el.style.transition="none";
+    el.style.opacity="0";
+    el.style.transform="translateX(8px)";
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.style.transition="opacity .32s ease, transform .32s ease";
+      el.style.opacity="1";
+      el.style.transform="translateX(0)";
+    }));
+  },[idx]);
+
+  const goNext=()=>{
+    const el=contentRef.current;
+    if(!el) return;
+    el.style.transition="opacity .22s ease, transform .22s ease";
+    el.style.opacity="0";
+    el.style.transform="translateX(-8px)";
+    setTimeout(()=>{
+      if(idx>=CALM_STEPS.length-1){onDone();return;}
+      setIdx(i=>i+1);
+    },240);
+  };
+
+  const step=CALM_STEPS[idx];
+  const prog=((idx+1)/CALM_STEPS.length)*100;
+
+  return(<div style={{background:c.bg,minHeight:"100vh",display:"flex",flexDirection:"column",padding:"44px 28px 36px",fontFamily:"'DM Sans',sans-serif"}}>
+    {/* Progress bar */}
+    <div style={{height:"2px",background:c.border,borderRadius:"1px",marginBottom:"24px"}}>
+      <div style={{height:"100%",width:`${prog}%`,background:c.green,borderRadius:"1px",transition:"width 1s ease"}}/>
+    </div>
+    {/* Step dots */}
+    <div style={{display:"flex",gap:"6px",marginBottom:"32px"}}>
+      {CALM_STEPS.map((_,i)=><div key={i} style={{flex:1,height:"3px",borderRadius:"2px",background:i<=idx?c.green:c.border,transition:"background .5s"}}/>)}
+    </div>
+    {/* Content — controlled by ref, never re-mounts */}
+    <div ref={contentRef} style={{flex:1,display:"flex",flexDirection:"column"}}>
+      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"10px",fontWeight:500}}>
+        STEP {idx+1} OF {CALM_STEPS.length}
+      </p>
+      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"6px",color:c.text,lineHeight:1.22}}>
+        {step.title}
+      </h2>
+      <p style={{fontSize:"14px",color:c.muted,marginBottom:"24px"}}>{step.sub}</p>
+
+      {step.type==="breath" && <BreathOrb c={c}/>}
+
+      {step.type==="affirm" && (
+        <div style={{background:c.surface2,borderRadius:"20px",padding:"28px",flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
+          <p style={{fontSize:"11px",letterSpacing:".2em",color:c.green,marginBottom:"16px",fontWeight:500}}>YOUR AFFIRMATION FOR TODAY</p>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"26px",fontWeight:300,lineHeight:1.65,fontStyle:"italic",color:c.text}}>"{aff}"</p>
+          <p style={{fontSize:"14px",color:c.muted,marginTop:"20px",lineHeight:1.6}}>Read this slowly.\nRead it once more. Let it settle into you.</p>
+        </div>
+      )}
+
+      {(step.type==="body"||step.type==="ground"||step.type==="release")&&(
+        <div style={{background:c.surface2,borderRadius:"20px",padding:"24px",flex:1}}>
+          <p style={{fontSize:"16px",lineHeight:1.9,color:c.text,whiteSpace:"pre-line"}}>{step.text}</p>
+        </div>
+      )}
+    </div>
+
+    <button onClick={goNext}
+      style={{marginTop:"20px",background:c.green,color:"#fff",border:"none",
+        padding:"18px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",letterSpacing:".02em",transition:"opacity .2s"}}
+      onMouseEnter={e=>e.target.style.opacity=".88"} onMouseLeave={e=>e.target.style.opacity="1"}>
+      {idx<CALM_STEPS.length-1?"Continue →":"I feel calm ✓"}
+    </button>
+  </div>);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   GUIDED MEDITATION PLAYER — blink-free segment transitions
+═════════════════════════════════════════════════════════════ */
+function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundOn}){
+  const [started,setStarted]=useState(false);
+  const [segIdx,setSegIdx]=useState(0);
+  const [done,setDone]=useState(false);
+  const [paused,setPaused]=useState(false);
+  const textRef=useRef(null);
+  const timerRef=useRef(null);
+  const pausedRef=useRef(false);
+
+  /* Start sound when meditation begins */
+  const begin=()=>{
+    setStarted(true);
+    sStart(med.sound);
+    setSoundOn(true);
+    setSound(med.sound);
+  };
+
+  /* When segment index changes, animate the text */
+  useEffect(()=>{
+    if(!started) return;
+    const el=textRef.current;
+    if(!el) return;
+    el.style.transition="none";
+    el.style.opacity="0";
+    el.style.transform="translateY(10px)";
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.style.transition="opacity .6s ease, transform .6s ease";
+      el.style.opacity="1";
+      el.style.transform="translateY(0)";
+    }));
+  },[segIdx,started]);
+
+  /* Auto-advance timer */
+  useEffect(()=>{
+    if(!started||done) return;
+    clearTimeout(timerRef.current);
+    if(pausedRef.current) return;
+    const seg=med.segs[segIdx];
+    timerRef.current=setTimeout(()=>{
+      if(pausedRef.current) return;
+      if(segIdx>=med.segs.length-1){setDone(true);}
+      else{
+        const el=textRef.current;
+        if(el){el.style.transition="opacity .35s ease";el.style.opacity="0";}
+        setTimeout(()=>setSegIdx(i=>i+1),370);
+      }
+    },seg.s*1000);
+    return()=>clearTimeout(timerRef.current);
+  },[segIdx,started,done]);
+
+  const togglePause=()=>{
+    pausedRef.current=!pausedRef.current;
+    setPaused(p=>!p);
+    if(!pausedRef.current){
+      // Resume — restart timer
+      const seg=med.segs[segIdx];
+      clearTimeout(timerRef.current);
+      timerRef.current=setTimeout(()=>{
+        if(segIdx>=med.segs.length-1){setDone(true);}
+        else{const el=textRef.current;if(el){el.style.transition="opacity .35s ease";el.style.opacity="0";}setTimeout(()=>setSegIdx(i=>i+1),370);}
+      },seg.s*1000);
+    }
+  };
+
+  const advanceSeg=()=>{
+    clearTimeout(timerRef.current);
+    if(segIdx>=med.segs.length-1){setDone(true);return;}
+    const el=textRef.current;
+    if(el){el.style.transition="opacity .25s ease";el.style.opacity="0";}
+    setTimeout(()=>setSegIdx(i=>i+1),270);
+  };
+
+  const NB="#0D0E1A";
+  const prog=((segIdx+1)/med.segs.length)*100;
+
+  if(done) return(
+    <div style={{position:"fixed",inset:0,zIndex:500,background:NB,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"48px 32px",animation:"riseIn .7s ease"}}>
+      <div style={{width:"76px",height:"76px",borderRadius:"50%",border:"1.5px solid #8FAFA8",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 32px",animation:"float 3s ease infinite"}}>
+        <span style={{fontSize:"30px",color:"#8FAFA8"}}>✓</span>
+      </div>
+      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,color:"#E8E2D8",marginBottom:"16px"}}>Complete.</h2>
+      <p style={{fontSize:"17px",color:"#545470",lineHeight:1.78,maxWidth:"280px",margin:"0 auto 48px"}}>
+        Carry this stillness with you.
+      </p>
+      <button onClick={()=>{sStop();onClose();}}
+        style={{background:"#526D6A",color:"#fff",border:"none",padding:"20px 48px",borderRadius:"100px",fontSize:"16px",fontWeight:500}}>
+        Return Home
+      </button>
+    </div>
+  );
+
+  /* Intro screen */
+  if(!started) return(
+    <div style={{position:"fixed",inset:0,zIndex:500,overflow:"hidden"}}>
+      <NatureCard src={med.img} grad={med.grad} style={{width:"100%",height:"100%",borderRadius:0}}>
+        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"52px 28px 52px"}}>
+          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:"100px",padding:"8px 18px",fontSize:"13px",color:"rgba(255,255,255,.8)",alignSelf:"flex-start",backdropFilter:"blur(8px)"}}>← Back</button>
+          <div>
+            <p style={{fontSize:"11px",letterSpacing:".35em",color:"rgba(255,255,255,.6)",marginBottom:"12px",fontWeight:500}}>{med.badge.toUpperCase()} · {med.duration}</p>
+            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,lineHeight:1.18,color:"#fff",marginBottom:"14px"}}>{med.title}</h1>
+            <p style={{fontSize:"17px",color:"rgba(255,255,255,.72)",lineHeight:1.65,marginBottom:"40px"}}>{med.tagline}</p>
+            <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"36px"}}>
+              <span style={{fontSize:"15px",color:"rgba(255,255,255,.55)"}}>{med.sound==="rain"?"🌧 Rain":med.sound==="ocean"?"🌊 Ocean":"🌿 Forest"} will play during this session</span>
+            </div>
+            <button onClick={begin}
+              style={{background:"rgba(255,255,255,.15)",backdropFilter:"blur(12px)",border:"1.5px solid rgba(255,255,255,.35)",color:"#fff",padding:"20px 40px",borderRadius:"100px",fontSize:"17px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>
+              Begin Meditation
+            </button>
+          </div>
+        </div>
+      </NatureCard>
+    </div>
+  );
+
+  /* Active player */
+  const seg=med.segs[segIdx];
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:500,overflow:"hidden"}}>
+      <NatureCard src={med.img} grad="rgba(5,5,18,.88)" style={{width:"100%",height:"100%",borderRadius:0}}>
+        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",padding:"44px 28px 52px"}}>
+          {/* Top bar */}
+          <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"28px"}}>
+            <button onClick={()=>{clearTimeout(timerRef.current);sStop();onClose();}}
+              style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:"100px",padding:"8px 16px",fontSize:"13px",color:"rgba(255,255,255,.7)"}}>✕</button>
+            <div style={{flex:1,height:"2px",background:"rgba(255,255,255,.12)",borderRadius:"1px"}}>
+              <div style={{height:"100%",width:`${prog}%`,background:"rgba(143,175,168,.75)",borderRadius:"1px",transition:"width 1s ease"}}/>
+            </div>
+            <button onClick={togglePause}
+              style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:"100px",padding:"8px 16px",fontSize:"13px",color:"rgba(255,255,255,.7)"}}>
+              {paused?"▷":"‖"}
+            </button>
+          </div>
+
+          {/* Subtle background orb */}
+          <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",
+            width:"300px",height:"300px",borderRadius:"50%",
+            background:"radial-gradient(circle, rgba(82,109,106,.12), transparent)",
+            animation:"orbIn 8s ease-in-out infinite",pointerEvents:"none"}}/>
+
+          {/* Meditation text — center stage */}
+          <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}}>
+            <div ref={textRef} style={{maxWidth:"340px",opacity:0}}>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"28px",fontWeight:300,lineHeight:1.72,color:"rgba(255,255,255,.92)",whiteSpace:"pre-line"}}>
+                {seg.text}
+              </p>
+            </div>
+          </div>
+
+          {/* Tap to advance */}
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"12px"}}>
+            <p style={{fontSize:"12px",color:"rgba(255,255,255,.35)",letterSpacing:".08em"}}>
+              {paused?"PAUSED":"TAP TO CONTINUE"}
+            </p>
+            <button onClick={advanceSeg}
+              style={{background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.2)",borderRadius:"100px",padding:"14px 36px",fontSize:"15px",color:"rgba(255,255,255,.8)"}}>
+              {segIdx>=med.segs.length-1?"Complete →":"Next →"}
+            </button>
+          </div>
+        </div>
+      </NatureCard>
+    </div>
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+/* ═════════════════════════════════════════════════════════════
+   NIGHT RESET — blink-free step transitions
+═════════════════════════════════════════════════════════════ */
+function NightReset({c,onDone,trans,setTrans}){
+  const [step,setStep]=useState(0);
+  const contentRef=useRef(null);
+  const autoRef=useRef(null);
+  const nightMounted=useRef(false);
+  const NB=c.dark?"#0D0E15":"#181A28";
+
+  const nightNext=useCallback(()=>{
+    const el=contentRef.current;
+    if(!el) return;
+    el.style.transition="opacity .24s ease";
+    el.style.opacity="0";
+    setTimeout(()=>setStep(s=>s+1),260);
+  },[]);
+
+  useEffect(()=>{
+    const el=contentRef.current;
+    if(!el) return;
+    if(!nightMounted.current){
+      /* First mount — show content immediately, no animation needed. */
+      nightMounted.current=true;
+      el.style.opacity="1";
+    } else {
+      /* After step change: nightNext() set opacity→0 via ref before setStep().
+         React re-rendered new content. Since opacity is NOT in JSX,
+         React did NOT reset it — it stayed at 0. Now fade new content in. */
+      el.style.transition="none";
+      el.style.opacity="0";
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        el.style.transition="opacity .38s ease";
+        el.style.opacity="1";
+      }));
+    }
+    clearTimeout(autoRef.current);
+    const last=step>=NIGHT_STEPS.length-1;
+    autoRef.current=setTimeout(()=>{
+      if(last){onDone();}else nightNext();
+    },13000);
+    return()=>clearTimeout(autoRef.current);
+  },[step]);
+
+  const ns=NIGHT_STEPS[Math.min(step,NIGHT_STEPS.length-1)];
+  return(<div style={{fontFamily:"'DM Sans',sans-serif",background:NB,minHeight:"100vh",display:"flex",flexDirection:"column",padding:"52px 28px 60px",color:"#E8E2D8"}}>
+    <div style={{display:"flex",gap:"8px",marginBottom:"36px"}}>
+      {NIGHT_STEPS.map((_,i)=><div key={i} style={{flex:1,height:"2px",borderRadius:"1px",background:i<=step?"#8FAFA8":"#252638",transition:"background .6s"}}/>)}
+    </div>
+    <div style={{textAlign:"center",marginBottom:"32px"}}>
+      <div style={{fontSize:"36px",display:"inline-block",animation:"moonSway 6s ease-in-out infinite"}}>{ns.icon}</div>
+    </div>
+    <div ref={contentRef} style={{flex:1}}>
+      <p style={{fontSize:"11px",letterSpacing:".32em",color:"#8FAFA8",marginBottom:"14px",fontWeight:500}}>NIGHT RESET · {step+1} OF {NIGHT_STEPS.length}</p>
+      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"22px",lineHeight:1.22,color:"#E8E2D8"}}>{ns.title}</h2>
+      {ns.type==="nightBreath"
+        ?<NightBreath/>
+        :<div style={{background:"rgba(255,255,255,.04)",borderRadius:"18px",padding:"24px"}}>
+          <p style={{fontSize:"16px",lineHeight:1.88,color:"#5A5A7A",whiteSpace:"pre-line"}}>{ns.body}</p>
+        </div>
+      }
+    </div>
+    <button onClick={()=>{clearTimeout(autoRef.current);if(step<NIGHT_STEPS.length-1)nightNext();else onDone();}}
+      style={{marginTop:"24px",background:"#526D6A",color:"#fff",border:"none",borderRadius:"100px",padding:"20px 32px",fontSize:"15px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>
+      {step<NIGHT_STEPS.length-1?"Continue →":"Complete Night Reset →"}
+    </button>
+    {trans&&<Trans bg={NB}/>}
+  </div>);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   JOURNAL
+═════════════════════════════════════════════════════════════ */
+const JKEY="reset_journal_v2";
+const JPROMPTS=["What happened today that I want to remember?","How did I feel today — really?","What am I grateful for right now, even if small?","What's one thing I'd tell myself tomorrow morning?"];
+function JournalTab({c}){
+  const today=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  const dk=new Date().toISOString().split("T")[0];
+  const [text,setText]=useState(()=>{try{return(JSON.parse(localStorage.getItem(JKEY)||"{}"))[dk]||"";}catch{return "";}});
+  const [saved,setSaved]=useState(false);const [pastOpen,setPastOpen]=useState(false);const [past,setPast]=useState([]);const [sp,setSp]=useState(0);
+  const save=()=>{try{const d=JSON.parse(localStorage.getItem(JKEY)||"{}");d[dk]=text;localStorage.setItem(JKEY,JSON.stringify(d));setSaved(true);setTimeout(()=>setSaved(false),2000);}catch(e){}};
+  const loadPast=()=>{try{const d=JSON.parse(localStorage.getItem(JKEY)||"{}");const e=Object.entries(d).filter(([k])=>k!==dk).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,7);setPast(e);}catch{}setPastOpen(true);};
+  return(<div style={{padding:"52px 28px 24px",animation:"riseIn .5s ease",fontFamily:"'DM Sans',sans-serif"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"8px"}}>
+      <div>
+        <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"8px",fontWeight:500}}>TODAY'S JOURNAL</p>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"30px",fontWeight:300,color:c.text}}>{today}</h1>
+      </div>
+      <button onClick={loadPast} style={{background:"transparent",border:`1px solid ${c.border}`,borderRadius:"100px",padding:"8px 16px",fontSize:"12px",color:c.muted,marginTop:"4px"}}>Past</button>
+    </div>
+    <div style={{display:"flex",gap:"7px",marginTop:"20px",marginBottom:"14px",overflowX:"auto",paddingBottom:"4px"}}>
+      {JPROMPTS.map((p,i)=>(
+        <button key={i} onClick={()=>setSp(i)} style={{flexShrink:0,padding:"8px 14px",borderRadius:"100px",fontSize:"12px",border:`1px solid ${sp===i?c.green:c.border}`,background:sp===i?`${c.green}15`:"transparent",color:sp===i?c.green:c.muted,transition:"all .2s",maxWidth:"190px",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{p.slice(0,24)}…</button>
+      ))}
+    </div>
+    <p style={{fontSize:"15px",color:c.text,lineHeight:1.65,marginBottom:"12px",fontStyle:"italic"}}>{JPROMPTS[sp]}</p>
+    <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Start writing... this is only for you."
+      style={{width:"100%",minHeight:"210px",background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px",fontSize:"16px",lineHeight:1.78,color:c.text,transition:"border-color .2s"}}
+      onFocus={e=>e.target.style.borderColor=c.green} onBlur={e=>e.target.style.borderColor=c.border}/>
+    <div style={{display:"flex",gap:"10px",marginTop:"12px"}}>
+      <button onClick={save} style={{flex:1,background:saved?"#3a6b68":c.green,color:"#fff",border:"none",padding:"16px",borderRadius:"100px",fontSize:"15px",fontWeight:500,transition:"background .3s"}}>{saved?"Saved ✓":"Save entry"}</button>
+      {text&&<button onClick={()=>setText("")} style={{background:"transparent",border:`1px solid ${c.border}`,borderRadius:"100px",padding:"16px 20px",fontSize:"14px",color:c.muted}}>Clear</button>}
+    </div>
+    <p style={{fontSize:"12px",color:c.muted,textAlign:"center",marginTop:"14px"}}>Your entries are saved privately on this device.</p>
+    {pastOpen&&(<div onClick={e=>{if(e.target===e.currentTarget)setPastOpen(false);}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.82)",zIndex:9999,display:"flex",flexDirection:"column",justifyContent:"flex-end",animation:"fadeIn .22s"}}>
+      <div style={{background:c.surface,borderRadius:"28px 28px 0 0",padding:"32px 28px 52px",maxHeight:"70vh",overflowY:"auto"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"24px"}}>
+          <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,fontWeight:500}}>PAST ENTRIES</p>
+          <button onClick={()=>setPastOpen(false)} style={{background:"transparent",border:"none",fontSize:"24px",color:c.muted}}>×</button>
+        </div>
+        {past.length===0?<p style={{color:c.muted,fontSize:"15px"}}>No past entries yet.</p>:past.map(([dt,tx])=>(
+          <div key={dt} style={{marginBottom:"20px",paddingBottom:"20px",borderBottom:`1px solid ${c.border}`}}>
+            <p style={{fontSize:"12px",color:c.green,marginBottom:"8px",fontWeight:500}}>{dt}</p>
+            <p style={{fontSize:"15px",color:c.text,lineHeight:1.7,display:"-webkit-box",WebkitLineClamp:3,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{tx}</p>
+          </div>
+        ))}
+      </div>
+    </div>)}
+  </div>);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   MAIN APP
+═════════════════════════════════════════════════════════════ */
+function ResetApp(){
+  const [view,      setView]    =useState("splash");
+  const [tab,       setTab]     =useState("home");
+  const [emotion,   setEmotion] =useState(null);
+  const [dark,      setDark]    =useState(false);
+  const [crisis,    setCrisis]  =useState(false);
+  const [ltopic,    setLtopic]  =useState(null);
+  const [visited,   setVisited] =useState(false);
+  const [sound,     setSound]   =useState("silence");
+  const [soundOn,   setSoundOn] =useState(false);
+  const [trans,     setTrans]   =useState(false);
+  const [gratTy,    setGratTy]  =useState(false);
+  const [activeMed, setActiveMed]=useState(null);
+  const {start:sStart,stop:sStop}=useSoundEngine();
+
+  const hr    =new Date().getHours();
+  const dIdx  =(new Date().getDate()-1)%GRATITUDE.length;
+  const grat  =GRATITUDE[dIdx];
+  const aff   =AFFIRMATIONS[(new Date().getDate()-1)%AFFIRMATIONS.length];
+  const greet =hr<12?"Good morning":hr<17?"Good afternoon":"Good evening";
+  const isNight=hr>=20||hr<6;
+  const scene =MEDITATIONS[dIdx%MEDITATIONS.length];
+
+  useEffect(()=>{if(isNight)setDark(true);},[]);
+  useEffect(()=>{if(view==="splash"){const t=setTimeout(()=>setView("onboard"),2700);return()=>clearTimeout(t);}},[ view]);
+
+  const go=(to,delay=200)=>{setTrans(true);setTimeout(()=>{setView(to);setTimeout(()=>setTrans(false),80);},delay);};
+  const handleSnd=(id)=>{if(id==="silence"||(soundOn&&sound===id)){sStop();setSoundOn(false);setSound("silence");}else{sStart(id);setSoundOn(true);setSound(id);}};
+
+  const c={
+    bg:dark?"#12131A":"#F5F1E9",surface:dark?"#1C1D27":"#FFFFFF",
+    surface2:dark?"#22232F":"#EEE9DF",text:dark?"#E8E2D8":"#3D3D3D",
+    muted:dark?"#787892":"#9A8E80",green:"#526D6A",
+    greenL:dark?"#8FAFA8":"#526D6A",border:dark?"#2A2B3A":"#DFD8CC",
+    dark,
+  };
+  const W={fontFamily:"'DM Sans',sans-serif",background:c.bg,color:c.text,minHeight:"100vh",maxWidth:"430px",margin:"0 auto",position:"relative",transition:"background .45s,color .45s"};
+
+  /* Active meditation overlay */
+  if(activeMed) return(<MeditationPlayer med={activeMed} c={c} onClose={()=>setActiveMed(null)}
+    sStart={sStart} sStop={sStop} soundOn={soundOn} setSound={setSound} setSoundOn={setSoundOn}/>);
+
+  /* ── SPLASH ── */
+  if(view==="splash") return(<div style={{...W,display:"flex",alignItems:"center",justifyContent:"center",height:"100vh"}}>
+    <div style={{textAlign:"center"}}>
+      <p style={{fontSize:"11px",letterSpacing:".45em",color:c.green,marginBottom:"22px",fontWeight:500,animation:"riseIn .7s ease"}}>RESET</p>
+      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"46px",fontWeight:300,lineHeight:1.15,color:c.text,animation:"riseIn .7s .22s ease both"}}>Your Daily<br/>Peace System</h1>
+      <div style={{marginTop:"36px",display:"flex",justifyContent:"center",gap:"10px",animation:"riseIn .7s .5s ease both"}}>
+        {[0,1,2].map(i=><div key={i} style={{width:"5px",height:"5px",borderRadius:"50%",background:c.green,animation:`pulse ${1.4+i*.3}s ease infinite ${i*.22}s`}}/>)}
+      </div>
+    </div>
+  </div>);
+
+  /* ── ONBOARDING ── */
+  if(view==="onboard") return(<div style={{...W,display:"flex",flexDirection:"column",minHeight:"100vh"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",padding:"64px 32px 40px",animation:"riseIn .55s ease"}}>
+      <p style={{fontSize:"11px",letterSpacing:".42em",color:c.green,marginBottom:"28px",fontWeight:500}}>RESET</p>
+      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"40px",fontWeight:300,lineHeight:1.22,marginBottom:"22px"}}>Welcome to your<br/>Daily Peace System.</h1>
+      <p style={{fontSize:"18px",color:c.muted,lineHeight:1.78,marginBottom:"48px"}}>Each morning or night, let's gently guide you back to calm.</p>
+      <div style={{display:"flex",flexDirection:"column",gap:"16px",marginBottom:"52px"}}>
+        {[["Tell us how you feel first","The app reads your state and adapts completely to you."],["5 steps to real calm","Breathing, body release, grounding, letting go, and affirmation."],["Come back morning, night, or anytime","No streaks. No guilt. No pressure."]].map(([t,b])=>(
+          <div key={t} style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
+            <div style={{width:"7px",height:"7px",borderRadius:"50%",background:c.green,marginTop:"7px",flexShrink:0}}/>
+            <div><div style={{fontSize:"15px",fontWeight:500,color:c.text,marginBottom:"3px"}}>{t}</div><div style={{fontSize:"14px",color:c.muted,lineHeight:1.6}}>{b}</div></div>
+          </div>
+        ))}
+      </div>
+      <button onClick={()=>go("state")} style={{background:c.green,color:"#fff",border:"none",padding:"20px 40px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>Start</button>
+    </div>
+    <p style={{textAlign:"center",fontSize:"12px",color:c.muted,padding:"20px",letterSpacing:".1em"}}>NO STREAKS · NO PRESSURE · JUST PEACE</p>
+    {trans&&<Trans bg={c.bg}/>}
+  </div>);
+
+  /* ── STATE ── */
+  if(view==="state") return(<div style={{...W,padding:"60px 28px 40px",animation:"riseIn .5s ease"}}>
+    <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"12px",fontWeight:500}}>CHECK IN</p>
+    <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"10px",lineHeight:1.22}}>How are you feeling<br/>right now?</h1>
+    <p style={{color:c.muted,fontSize:"15px",marginBottom:"36px"}}>No wrong answers. Just be honest.</p>
+    <div style={{display:"flex",flexDirection:"column",gap:"12px",marginBottom:"20px"}}>
+      {EMOTIONS.map(em=>(
+        <button key={em.id} onClick={()=>{setEmotion(em.id);go("response");}}
+          style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"22px 24px",textAlign:"left",transition:"all .22s",display:"flex",justifyContent:"space-between",alignItems:"center"}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=c.green;e.currentTarget.style.background=c.surface2;}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=c.border;e.currentTarget.style.background=c.surface;}}>
+          <div><div style={{fontSize:"16px",fontWeight:500,color:c.text}}>{em.label}</div><div style={{fontSize:"13px",color:c.muted,marginTop:"3px"}}>{em.sub}</div></div>
+          <span style={{color:c.muted,fontSize:"22px",fontWeight:300}}>›</span>
+        </button>
+      ))}
+    </div>
+    <button onClick={()=>setCrisis(true)} style={{background:"transparent",border:`1px solid ${c.border}`,borderRadius:"14px",padding:"16px 24px",width:"100%",textAlign:"center",fontSize:"14px",color:c.muted,transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>I need immediate help</button>
+    {trans&&<Trans bg={c.bg}/>}
+    {crisis&&<CrisisModal c={c} onClose={()=>setCrisis(false)}/>}
+  </div>);
+
+  /* ── RESPONSE ── */
+  if(view==="response"&&emotion){
+    const r=RESP[emotion];
+    return(<div style={{...W,padding:"80px 32px 60px",display:"flex",flexDirection:"column",minHeight:"100vh",animation:"riseIn .5s ease"}}>
+      <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
+        <div style={{width:"42px",height:"1.5px",background:c.green,marginBottom:"32px"}}/>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"38px",fontWeight:300,lineHeight:1.28,marginBottom:"18px"}}>{r.msg}</h1>
+        <p style={{fontSize:"17px",color:c.muted,lineHeight:1.8,marginBottom:"52px"}}>{r.sub}</p>
+        <button onClick={()=>{if(r.next==="gratitude"){setGratTy(false);setVisited(true);go("gratitude");}else go(r.next);}}
+          style={{background:c.green,color:"#fff",border:"none",padding:"20px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",marginBottom:"14px",letterSpacing:".02em"}}>
+          {r.btn}
+        </button>
+        <button onClick={()=>go("state")} style={{background:"transparent",border:"none",color:c.muted,fontSize:"14px",padding:"10px"}}>← Go back</button>
+      </div>
+      {trans&&<Trans bg={c.bg}/>}
+    </div>);
+  }
+
+  /* ── CALM FLOW ── */
+  if(view==="reset5") return(<><CalmFlow c={c} onDone={()=>{setVisited(true);go("completion");}}/>{trans&&<Trans bg={c.bg}/>}</>);
+
+  /* ── COMPLETION ── */
+  if(view==="completion") return(<div style={{...W,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",padding:"48px 32px",textAlign:"center",animation:"riseIn .55s ease"}}>
+    <div style={{width:"76px",height:"76px",borderRadius:"50%",border:`1.5px solid ${c.green}`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 32px",animation:"float 3s ease infinite"}}>
+      <span style={{fontSize:"30px",color:c.green}}>✓</span>
+    </div>
+    <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"46px",fontWeight:300,marginBottom:"16px"}}>Reset complete.</h1>
+    <p style={{fontSize:"17px",color:c.muted,lineHeight:1.78,maxWidth:"320px",margin:"0 auto 8px"}}>You came back to yourself.<br/>That's the hardest and most important thing.</p>
+    <div style={{display:"flex",flexDirection:"column",gap:"12px",marginTop:"44px",width:"100%"}}>
+      <button onClick={()=>{setTab("home");go("main");}} style={{background:c.green,color:"#fff",border:"none",padding:"20px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,letterSpacing:".02em"}}>Return Home</button>
+      <button onClick={()=>{setGratTy(false);go("gratitude");}} style={{background:"transparent",border:`1px solid ${c.border}`,padding:"18px 32px",borderRadius:"100px",fontSize:"15px",color:c.muted,transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>Open Today's Gratitude</button>
+    </div>
+    {trans&&<Trans bg={c.bg}/>}
+  </div>);
+
+  /* ── NIGHT ── */
+  if(view==="night") return(<NightReset c={c} onDone={()=>{setVisited(true);go("completion");}} trans={trans} setTrans={setTrans}/>);
+
+  /* ── GRATITUDE ── */
+  if(view==="gratitude"){
+    if(gratTy) return(<div style={{...W,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",padding:"48px 32px",textAlign:"center",animation:"riseIn .55s ease"}}>
+      <div style={{fontSize:"42px",animation:"float 3s ease infinite",marginBottom:"28px"}}>🌿</div>
+      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,marginBottom:"18px",color:c.text}}>Thank you.</h2>
+      <p style={{fontSize:"17px",color:c.muted,lineHeight:1.78,maxWidth:"300px",margin:"0 auto 48px"}}>Taking a moment to be grateful is one of the most powerful things you can do for yourself.</p>
+      <button onClick={()=>{setGratTy(false);setTab("home");go("main");}} style={{background:c.green,color:"#fff",border:"none",padding:"20px 48px",borderRadius:"100px",fontSize:"16px",fontWeight:500}}>Return Home</button>
+      {trans&&<Trans bg={c.bg}/>}
+    </div>);
+    return(<div style={{...W,padding:"52px 28px 80px",animation:"riseIn .5s ease"}}>
+      <button onClick={()=>{setTab("home");go("main");}} style={{background:"transparent",border:"none",color:c.muted,fontSize:"14px",marginBottom:"32px",padding:0,display:"block"}}>← Back</button>
+      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"12px",fontWeight:500}}>TODAY'S GRATITUDE</p>
+      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"30px",lineHeight:1.22}}>{grat.title}</h1>
+      <NatureCard src={scene.img} grad={scene.grad} style={{marginBottom:"20px"}}>
+        <div style={{padding:"32px 28px"}}>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"22px",fontWeight:300,lineHeight:1.72,fontStyle:"italic",color:"#fff"}}>"{grat.text}"</p>
+        </div>
+      </NatureCard>
+      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"26px",marginBottom:"20px"}}>
+        <p style={{fontSize:"11px",letterSpacing:".2em",color:c.green,marginBottom:"12px",fontWeight:500}}>REFLECT ON THIS</p>
+        <p style={{fontSize:"16px",color:c.text,lineHeight:1.7}}>{grat.prompt}</p>
+      </div>
+      <div style={{background:c.surface2,borderRadius:"18px",padding:"24px",marginBottom:"28px"}}>
+        <p style={{fontSize:"11px",letterSpacing:".2em",color:c.green,marginBottom:"12px",fontWeight:500}}>TODAY'S AFFIRMATION</p>
+        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"19px",fontWeight:300,lineHeight:1.68,fontStyle:"italic",color:c.text}}>"{aff}"</p>
+      </div>
+      <button onClick={()=>setGratTy(true)} style={{background:c.green,color:"#fff",border:"none",padding:"18px 32px",borderRadius:"100px",fontSize:"15px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>I've reflected ✓</button>
+      {trans&&<Trans bg={c.bg}/>}
+    </div>);
+  }
+
+  /* ── LEARN DETAIL ── */
+  if(view==="learn-detail"&&ltopic) return(<div style={{...W,padding:"52px 28px 80px",animation:"riseIn .5s ease"}}>
+    <button onClick={()=>{setTab("learn");go("main");}} style={{background:"transparent",border:"none",color:c.muted,fontSize:"14px",marginBottom:"28px",padding:0,display:"block"}}>← Learn</button>
+    <div style={{fontSize:"32px",marginBottom:"14px"}}>{ltopic.e}</div>
+    <p style={{fontSize:"11px",letterSpacing:".22em",color:c.green,marginBottom:"8px",fontWeight:500}}>{ltopic.m} read</p>
+    <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"34px",fontWeight:300,marginBottom:"36px",lineHeight:1.25}}>{ltopic.t}</h1>
+    <div style={{display:"flex",flexDirection:"column",gap:"22px"}}>
+      {ltopic.c.map((p,i)=><p key={i} style={{fontSize:"17px",lineHeight:1.84,color:i===0?c.text:c.muted,fontWeight:i===0?500:400}}>{p}</p>)}
+    </div>
+    {trans&&<Trans bg={c.bg}/>}
+  </div>);
+
+  /* ════ MAIN TABS ════ */
+  if(view==="main"||visited){
+    const TABS=[{id:"home",l:"Home",i:"⌂"},{id:"meditate",l:"Meditate",i:"◉"},{id:"night",l:"Night",i:"☽"},{id:"journal",l:"Journal",i:"✏"},{id:"more",l:"More",i:"···"}];
+
+    const LEARN_DATA=[
+      {id:1,e:"🌊",t:"Why Your Mind Feels Overwhelmed",m:"3 min",c:["Your brain isn't broken. It's overwhelmed. There's a big difference.","Every day, your brain processes thousands of pieces of information — emails, decisions, worries. It's doing enormous invisible work.","When things pile up, your brain's alarm system fires. It doesn't care about logic. It just sees pressure.","That feeling of 'I can't think straight'? That's your alarm drowning out your rational mind.","The solution isn't to think harder. It's to slow down just enough so your calm mind can come back online.","You are not too much. You are overloaded. And overloaded systems just need to pause."]},
+      {id:2,e:"⚡",t:"What Anxiety Actually Is",m:"4 min",c:["Anxiety isn't weakness. It's your brain being too good at its job.","Your brain runs a simulation — asking 'what could go wrong?' Not because something is wrong, but to protect you.","It can't tell the difference between a real danger and an email you're nervous about. Both trigger the same alarm.","So your heart races. Your chest tightens. Your thoughts loop. None of that means something bad is happening.","The way out isn't to fight it. It's to send your brain a calm signal: we're safe. We're here.","Anxiety is a messenger. Not a verdict."]},
+      {id:3,e:"🌿",t:"How to Calm Your Thoughts Fast",m:"3 min",c:["When thoughts are racing, the worst thing you can do is fight them.","Name what you feel specifically — 'I feel scared that I'm going to fail.' Naming activates your rational mind.","Breathe out longer than you breathe in. Try 4 counts in, 6 counts out. Your nervous system has a brake pedal.","Look around and name 3 real things you can see. This pulls you out of your head and back into the room.","Say one true thing: 'I am here. This feeling will pass. I have made it through hard things before.'","Done fully, it takes 60 seconds. The goal is to slow down enough that you're driving again."]},
+      {id:4,e:"🔄",t:"When Your Mind Won't Stop Looping",m:"4 min",c:["You've been in bed for an hour. Your brain won't stop. The same thoughts, over and over.","Your brain is stuck in problem-solving mode — running the same loop hoping to find the answer.","The way to break the loop isn't to solve the problem. It's to give your brain something different to do.","Write down every thought. Your brain will stop running it because it feels 'stored.'","Change your physical position. Stand up. Splash water on your face.","Accept you might not solve it tonight. Some things need sleep, not more thinking."]},
+    ];
+
+    const Home=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"24px"}}>
+        <div><p style={{fontSize:"14px",color:c.muted,marginBottom:"4px"}}>{greet}</p><h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"34px",fontWeight:300,lineHeight:1.22}}>How are you<br/>feeling today?</h1></div>
+      </div>
+      {/* Hero — nature + Reset CTA */}
+      <NatureCard src={scene.img} grad={scene.grad} onClick={()=>{setEmotion(null);go("state");}} style={{marginBottom:"14px"}}>
+        <div style={{padding:"28px 26px 24px"}}>
+          <p style={{fontSize:"11px",letterSpacing:".28em",color:"rgba(255,255,255,.6)",marginBottom:"10px"}}>YOUR DAILY RESET</p>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"28px",fontWeight:300,color:"#fff",marginBottom:"8px",lineHeight:1.2}}>5-Step Calm Flow</p>
+          <p style={{fontSize:"13px",color:"rgba(255,255,255,.6)"}}>Breathe · Release · Ground · Let go · Affirm</p>
+        </div>
+      </NatureCard>
+      {/* Two cards row */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"14px"}}>
+        <div onClick={()=>{setNStep&&setNStep(0);go("night");}} style={{background:dark?"#191B2A":"#1C1E30",borderRadius:"20px",padding:"20px",cursor:"pointer",transition:"opacity .2s"}} onMouseEnter={e=>e.currentTarget.style.opacity=".9"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+          <div style={{fontSize:"24px",marginBottom:"10px",animation:"moonSway 6s ease-in-out infinite"}}>☽</div>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"17px",fontWeight:300,color:"#E8E2D8",lineHeight:1.3}}>Night Reset</p>
+          <p style={{fontSize:"12px",color:"#4A4A68",marginTop:"4px"}}>Calm before sleep</p>
+        </div>
+        <div onClick={()=>{setGratTy(false);go("gratitude");}} style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"20px",padding:"20px",cursor:"pointer",transition:"border-color .25s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
+          <div style={{fontSize:"24px",marginBottom:"10px"}}>🌿</div>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"17px",fontWeight:300,color:c.text,lineHeight:1.3}}>Gratitude</p>
+          <p style={{fontSize:"12px",color:c.muted,marginTop:"4px"}}>{grat.title}</p>
+        </div>
+      </div>
+      {/* Affirmation */}
+      <div style={{background:c.surface2,borderRadius:"22px",padding:"22px 24px",marginBottom:"14px"}}>
+        <p style={{fontSize:"11px",letterSpacing:".28em",color:c.green,marginBottom:"12px",fontWeight:500}}>TODAY'S AFFIRMATION</p>
+        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"18px",fontWeight:300,lineHeight:1.65,fontStyle:"italic",color:c.text}}>"{aff}"</p>
+      </div>
+      {/* Sound */}
+      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"22px",padding:"20px 24px",marginBottom:"14px"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"14px"}}>
+          <p style={{fontSize:"11px",letterSpacing:".28em",color:c.green,fontWeight:500}}>AMBIENT SOUND</p>
+          {soundOn&&<Waveform active={true} color={c.green}/>}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"8px"}}>
+          {["rain","ocean","forest"].map(id=>(<button key={id} onClick={()=>handleSnd(id)} style={{padding:"12px 6px",borderRadius:"14px",border:`1px solid ${soundOn&&sound===id?c.green:c.border}`,background:soundOn&&sound===id?`${c.green}18`:"transparent",fontSize:"13px",color:soundOn&&sound===id?c.green:c.muted,fontWeight:soundOn&&sound===id?500:400,transition:"all .25s",display:"flex",flexDirection:"column",alignItems:"center",gap:"5px"}}>
+            <span style={{fontSize:"18px"}}>{id==="rain"?"🌧":id==="ocean"?"🌊":"🌿"}</span>
+            <span>{id[0].toUpperCase()+id.slice(1)}</span>
+          </button>))}
+        </div>
+        {soundOn&&<button onClick={()=>handleSnd("silence")} style={{marginTop:"10px",background:"transparent",border:`1px solid ${c.border}`,borderRadius:"100px",padding:"8px 20px",fontSize:"12px",color:c.muted,width:"100%",transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>Stop sound</button>}
+      </div>
+      {/* Crisis */}
+      <button onClick={()=>setCrisis(true)} style={{background:"transparent",border:`1px dashed ${c.border}`,borderRadius:"16px",padding:"18px 22px",width:"100%",textAlign:"left",display:"flex",alignItems:"center",gap:"14px",transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
+        <div style={{width:"36px",height:"36px",borderRadius:"50%",border:`1px solid ${c.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:c.muted,flexShrink:0}}>!</div>
+        <div><div style={{fontSize:"14px",fontWeight:500,color:c.text}}>I need immediate help</div><div style={{fontSize:"12px",color:c.muted,marginTop:"2px"}}>Crisis support — always available</div></div>
+      </button>
+    </div>);
+
+    /* MEDITATE TAB */
+    const Meditate=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
+      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"8px",fontWeight:500}}>GUIDED MEDITATION</p>
+      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"8px"}}>Find Your Still</h1>
+      <p style={{fontSize:"15px",color:c.muted,marginBottom:"28px"}}>Choose what you need right now. Let us guide you there.</p>
+      <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
+        {MEDITATIONS.map(m=>(
+          <NatureCard key={m.id} src={m.img} grad={m.grad} onClick={()=>setActiveMed(m)} style={{cursor:"pointer"}}>
+            <div style={{padding:"24px 24px 20px",display:"flex",alignItems:"center",gap:"16px"}}>
+              <div style={{flex:1}}>
+                <div style={{display:"flex",gap:"8px",alignItems:"center",marginBottom:"8px"}}>
+                  <span style={{fontSize:"11px",letterSpacing:".22em",color:"rgba(255,255,255,.55)",fontWeight:500}}>{m.badge.toUpperCase()}</span>
+                  <span style={{fontSize:"11px",color:"rgba(255,255,255,.35)"}}>·</span>
+                  <span style={{fontSize:"11px",color:"rgba(255,255,255,.55)"}}>{m.duration}</span>
+                </div>
+                <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"22px",fontWeight:300,color:"#fff",marginBottom:"4px",lineHeight:1.2}}>{m.title}</p>
+                <p style={{fontSize:"13px",color:"rgba(255,255,255,.6)"}}>{m.tagline}</p>
+              </div>
+              <div style={{width:"42px",height:"42px",borderRadius:"50%",border:"1px solid rgba(255,255,255,.3)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,backdropFilter:"blur(8px)",background:"rgba(255,255,255,.1)"}}>
+                <span style={{color:"#fff",fontSize:"16px"}}>▷</span>
+              </div>
+            </div>
+          </NatureCard>
+        ))}
+      </div>
+    </div>);
+
+    const Learn=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
+      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"8px",fontWeight:500}}>UNDERSTAND YOUR MIND</p>
+      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"8px"}}>Learn</h1>
+      <p style={{fontSize:"15px",color:c.muted,marginBottom:"32px"}}>Short reads. Human language. No clinical tone.</p>
+      <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+        {LEARN_DATA.map(t=>(<div key={t.id} onClick={()=>{setLtopic(t);go("learn-detail");}} style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px 22px",cursor:"pointer",display:"flex",alignItems:"center",gap:"16px",transition:"border-color .22s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
+          <div style={{fontSize:"26px",flexShrink:0}}>{t.e}</div>
+          <div style={{flex:1}}><div style={{fontSize:"16px",fontWeight:500,color:c.text,marginBottom:"4px"}}>{t.t}</div><div style={{fontSize:"13px",color:c.muted}}>{t.m} read</div></div>
+          <span style={{color:c.muted,fontSize:"20px"}}>›</span>
+        </div>))}
+      </div>
+    </div>);
+
+    const More=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
+      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"32px"}}>More</h1>
+      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px 22px",marginBottom:"12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div><div style={{fontSize:"16px",fontWeight:500,color:c.text}}>Dark Mode</div><div style={{fontSize:"13px",color:c.muted,marginTop:"2px"}}>Auto-enables at night (8pm – 6am)</div></div>
+        <button onClick={()=>setDark(d=>!d)} style={{width:"52px",height:"28px",borderRadius:"14px",border:"none",background:dark?c.green:c.border,position:"relative",transition:"background .3s",flexShrink:0}}>
+          <div style={{position:"absolute",top:"4px",left:dark?"26px":"4px",width:"20px",height:"20px",borderRadius:"50%",background:"#fff",transition:"left .28s ease",boxShadow:"0 1px 4px rgba(0,0,0,.2)"}}/>
+        </button>
+      </div>
+      <div onClick={()=>setTab("learn")} style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px 22px",marginBottom:"12px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
+        <div style={{fontSize:"16px",fontWeight:500,color:c.text}}>Learn about your mind</div>
+        <span style={{color:c.muted,fontSize:"20px"}}>›</span>
+      </div>
+      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"26px",marginTop:"12px"}}>
+        <p style={{fontSize:"11px",letterSpacing:".22em",color:c.green,marginBottom:"20px",fontWeight:500}}>ABOUT RESET</p>
+        {[["When to use","Morning Reset to start clear. Night Reset to calm your mind before sleep. Meditations anytime. Journal to process your day."],["What this is NOT","Not therapy. Not a replacement for professional mental health care. A real-time first-response tool for everyday emotional moments."],["No streaks. No guilt.","Come when you need it. Leave when you're ready. Rest is not failure."]].map(([t,b])=>(
+          <div key={t} style={{marginBottom:"20px"}}><div style={{fontSize:"14px",fontWeight:500,color:c.text,marginBottom:"6px"}}>{t}</div><div style={{fontSize:"14px",color:c.muted,lineHeight:1.7}}>{b}</div></div>
+        ))}
+      </div>
+      <p style={{textAlign:"center",fontSize:"12px",color:c.muted,marginTop:"32px",letterSpacing:".08em"}}>RESET · YOUR DAILY PEACE SYSTEM · V3.0</p>
+    </div>);
+
+    return(<div style={{...W,paddingBottom:"84px"}}>
+      {tab==="home"    &&<Home/>}
+      {tab==="meditate"&&<Meditate/>}
+      {tab==="journal" &&<JournalTab c={c}/>}
+      {tab==="learn"   &&<Learn/>}
+      {tab==="more"    &&<More/>}
+
+      {/* BOTTOM NAV */}
+      <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:"430px",background:dark?"rgba(28,29,39,.97)":"rgba(245,241,233,.97)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderTop:`1px solid ${c.border}`,display:"flex",padding:"8px 0 24px",zIndex:100,transition:"background .45s,border-color .45s"}}>
+        {TABS.map(t=>{
+          const active=tab===t.id&&t.id!=="reset"&&t.id!=="night";
+          return(<button key={t.id}
+            onClick={()=>{
+              if(t.id==="reset"){go("state",190);}
+              else if(t.id==="night"){go("night",190);}
+              else setTab(t.id);
+            }}
+            style={{flex:1,background:"transparent",border:"none",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px",padding:"4px 0",transition:"opacity .2s"}}
+            onMouseEnter={e=>e.currentTarget.style.opacity=".7"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+            <span style={{fontSize:"18px",color:active?c.green:c.muted,transition:"color .25s"}}>{t.i}</span>
+            <span style={{fontSize:"10px",color:active?c.green:c.muted,fontWeight:active?500:400,transition:"color .25s"}}>{t.l}</span>
+            {active&&<div style={{width:"4px",height:"4px",borderRadius:"50%",background:c.green,animation:"fadeIn .3s"}}/>}
+          </button>);
+        })}
+      </nav>
+      {trans&&<Trans bg={c.bg}/>}
+      {crisis&&<CrisisModal c={c} onClose={()=>setCrisis(false)}/>}
+    </div>);
+  }
+
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<ResetApp/>);
 </script>
 </body>
 </html>
