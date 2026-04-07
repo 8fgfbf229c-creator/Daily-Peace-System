@@ -13,59 +13,156 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
 <style>
-* {box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;-webkit-backface-visibility:hidden;backface-visibility:hidden}
-html,body {width:100%;min-height:100%;background-color:#0A0F0D}
-#root {min-height:100vh}
-button,textarea {font-family:'DM Sans',sans-serif;outline:none;border:none;cursor:pointer}
-textarea {resize:none}
-@keyframes fadeIn {from{opacity:0}to{opacity:1}}
-@keyframes fadeOut {from{opacity:1}to{opacity:0}}
-@keyframes riseIn {from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp {from{transform:translateY(100%)}to{transform:translateY(0)}}
-@keyframes moonSway {0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(4deg)}}
-@keyframes ripple {0%{transform:scale(.7);opacity:.5}100%{transform:scale(2.4);opacity:0}}
-@keyframes glow {0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 50px 12px rgba(82,109,106,.13)}}
-@keyframes w1{0%,100%{height:4px}50%{height:18px}}
-@keyframes w2{0%,100%{height:4px}35%{height:12px}70%{height:7px}}
-@keyframes w3{0%,100%{height:4px}45%{height:20px}}
-@keyframes w4{0%,100%{height:4px}25%{height:11px}65%{height:16px}}
-@keyframes w5{0%,100%{height:4px}60%{height:9px}80%{height:15px}}
+/* THE ANTI-BLINK FOUNDATION */
+:root { --bg: #0A0F0D; --surface: #141A18; --green: #526D6A; --text: #E8E2D8; }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg) !important; /* Force background to stay dark */
+  overflow-x: hidden;
+}
+
+#root {
+  background-color: var(--bg);
+  min-height: 100vh;
+}
+
+/* Smooth Fade for Content Transitions */
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+button { font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; outline: none; }
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(82, 109, 106, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(82, 109, 106, 0.3); }
+}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect,useRef,useCallback}=React;
-const GRATITUDE=[{title:"The Gift of Today",text:"Thank you, God, for another morning. Not everyone woke up today — I did.",prompt:"What's one small thing today that usually goes unnoticed?"},{title:"The People Around You",text:"Thank you for the people in my life who show up in quiet ways.",prompt:"Who made your life a little easier this week?"},{title:"Your Body Carried You",text:"Thank you for a body that breathes without me asking.",prompt:"What has your body handled lately that deserves a thank you?"}];
-const AFFIRMATIONS=["I am allowed to take up space and move at my own pace.","I do not need to earn rest. Rest is my right.","I am doing better than I think.","I am not behind. I am exactly where I need to be right now.","I choose to release what I cannot control."];
-const CALM_STEPS=[{title:"Breathe",sub:"Slow your nervous system down",type:"breath"},{title:"Release",sub:"Let go of tension in your body",type:"body",text:"Let your forehead soften. Unclench your jaw. Drop your shoulders. Notice how much your body was holding. Let it go."},{title:"Ground Yourself",sub:"Come back to this moment",type:"ground",text:"Find 5 things you see, 4 you feel, 3 you hear, 2 you smell. You are here. You are safe."},{title:"Your Affirmation",sub:"Read this slowly.",type:"affirm"}];
-const EMOTIONS=[{id:"overwhelmed",label:"Overwhelmed"},{id:"stressed",label:"Stressed"},{id:"tired",label:"Mentally Tired"},{id:"calm",label:"Calm"}];
-const RESP={overwhelmed:{msg:"You don't have to solve everything now.",sub:"One breath at a time.",btn:"Start Reset",next:"reset5"},stressed:{msg:"Let's find some space.",sub:"Pressure is just a feeling.",btn:"Start Reset",next:"reset5"},tired:{msg:"You've done enough.",sub:"Rest is a productive act.",btn:"Start Reset",next:"reset5"},calm:{msg:"Stay in this space.",sub:"Let's deepen your peace.",btn:"Go to Home",next:"home"}};
+const { useState, useEffect, useRef } = React;
 
-function BreathOrb({c}){
-  const [ph,setPh]=useState(0);const [cnt,setCnt]=useState(4);const ref=useRef(null);
-  useEffect(()=>{
-    let c2=ph===0?4:ph===1?4:6;setCnt(c2);clearInterval(ref.current);
-    ref.current=setInterval(()=>{c2--;if(c2<=0){clearInterval(ref.current);setPh((ph+1)%3);}else setCnt(c2);},1000);
-    return()=>clearInterval(ref.current);
-  },[ph]);
-  return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",margin:"40px 0"}}><div style={{position:"relative",width:160,height:160,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:"50%",background:`radial-gradient(circle, ${c.green}30, transparent)`,animation:"glow 4s infinite",border:`1px solid ${c.green}20`}}><div style={{textAlign:"center"}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"48px",color:c.text}}>{cnt}</div><div style={{fontSize:"10px",color:C.greenL,letterSpacing:".1em"}}>{ph===0?"IN":ph===1?"HOLD":"OUT"}</div></div></div></div>);
+const C = { bg: "#0A0F0D", surface: "#141A18", border: "#232A28", green: "#526D6A", greenL: "#8FAFA8", text: "#E8E2D8", muted: "#A8A298" };
+
+const EMOTIONS = [
+  { id: "overwhelmed", label: "Overwhelmed" },
+  { id: "stressed", label: "Stressed" },
+  { id: "tired", label: "Mentally Tired" },
+  { id: "calm", label: "Calm" }
+];
+
+const RESP = {
+  overwhelmed: { msg: "Slow down.", sub: "One breath is enough.", btn: "Start Reset", next: "reset" },
+  stressed: { msg: "Release the pressure.", sub: "You are doing okay.", btn: "Start Reset", next: "reset" },
+  tired: { msg: "Rest is allowed.", sub: "Your mind needs a break.", btn: "Start Reset", next: "reset" },
+  calm: { msg: "Peace is yours.", sub: "Let's keep it that way.", btn: "Go Home", next: "home" }
+};
+
+function BreathOrb() {
+  const [ph, setPh] = useState(0);
+  const [cnt, setCnt] = useState(4);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    let c = ph === 2 ? 6 : 4;
+    setCnt(c);
+    clearInterval(timer.current);
+    timer.current = setInterval(() => {
+      c--;
+      if (c <= 0) {
+        clearInterval(timer.current);
+        setPh((prev) => (prev + 1) % 3);
+      } else setCnt(c);
+    }, 1000);
+    return () => clearInterval(timer.current);
+  }, [ph]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '40px 0' }}>
+      <div style={{ width: 180, height: 180, borderRadius: '50%', border: `2px solid ${C.green}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'glow 4s infinite' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '56px', color: C.text }}>{cnt}</div>
+          <div style={{ fontSize: '12px', letterSpacing: '0.2em', color: C.greenL }}>{ph === 0 ? "IN" : ph === 1 ? "HOLD" : "OUT"}</div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-const C={bg:"#0A0F0D",surface:"#141A18",border:"#232A28",green:"#526D6A",greenL:"#8FAFA8",text:"#E8E2D8",muted:"#A8A298"};
+function App() {
+  const [view, setView] = useState('checkin');
+  const [step, setStep] = useState(0);
+  const [resetStep, setResetStep] = useState(0);
 
-function App(){
-  const [view,setView]=useState('checkin');const [step,setStep]=useState(0);
-  const nav=(v,s=0)=>{setView(v);setStep(s);window.scrollTo(0,0)};
+  const nav = (v, s = 0) => {
+    setView(v);
+    if (v === 'response') setStep(s);
+    window.scrollTo(0, 0);
+  };
 
-  if(view==='checkin') return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"60px 28px",animation:"fadeIn .5s ease"}}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"38px",textAlign:"center",marginBottom:"40px"}}>How is your mind?</h2><div style={{display:"grid",gap:"16px"}}>{EMOTIONS.map((e,i)=>(<button key={e.id} onClick={()=>nav('response',i)} style={{background:C.surface,padding:"24px",borderRadius:"24px",textAlign:"left",border:`1px solid ${C.border}`,color:C.text,fontSize:"18px"}}>{e.label}</button>))}</div></div>);
-  if(view==='response'){const r=RESP[EMOTIONS[step].id];return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"80px 28px",textAlign:"center",animation:"fadeIn .5s ease"}}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"42px"}}>{r.msg}</h2><p style={{color:C.muted,margin:"20px 0 60px"}}>{r.sub}</p><button onClick={()=>nav(r.next)} style={{width:"100%",height:"64px",background:C.green,borderRadius:"22px",fontSize:"17px",color:C.bg}}>{r.btn}</button></div>)}
-  if(view==='reset5'){const s=CALM_STEPS[step];return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"60px 28px",display:"flex",flexDirection:"column",animation:"fadeIn .5s ease"}}><p style={{fontSize:"12px",color:C.greenL,letterSpacing:".2em"}}>STEP {step+1}/4</p><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"40px",margin:"20px 0"}}>{s.title}</h2><div style={{flex:1}}>{s.type==='breath' && <BreathOrb c={C}/>}{s.text && <p style={{fontSize:"20px",lineHeight:1.6}}>{s.text}</p>}{s.type==='affirm' && <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"32px",textAlign:"center",marginTop:"40px"}}>"{AFFIRMATIONS[0]}"</p>}</div><button onClick={()=>{if(step<3)setStep(step+1);else nav('home')}} style={{width:"100%",height:"64px",background:C.surface,border:`1px solid ${C.border}`,color:C.text,borderRadius:"22px"}}>{step<3?"Next":"Finish"}</button></div>)}
-  if(view==='home') return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"60px 24px",animation:"fadeIn .5s ease"}}><h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"32px",marginBottom:"30px"}}>Welcome to Peace.</h2><div style={{display:"grid",gap:"16px"}}><button onClick={()=>nav('reset5')} style={{background:C.surface,padding:"24px",borderRadius:"24px",border:`1px solid ${C.border}`,color:C.text,textAlign:"left"}}><p style={{fontSize:"18px"}}>5-Step Reset</p><p style={{fontSize:"13px",color:C.muted}}>Find calm instantly</p></button><button onClick={()=>nav('checkin')} style={{background:C.surface,padding:"24px",borderRadius:"24px",border:`1px solid ${C.border}`,color:C.text,textAlign:"left"}}><p style={{fontSize:"18px"}}>New Check-in</p></button></div></div>);
-  return null;
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      
+      {view === 'checkin' && (
+        <div className="fade-in" style={{ padding: '60px 28px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '38px', textAlign: 'center', color: C.text, marginBottom: '40px' }}>How is your mind?</h2>
+          <div style={{ display: 'grid', gap: '16px' }}>
+            {EMOTIONS.map((e, i) => (
+              <button key={e.id} onClick={() => nav('response', i)} style={{ background: C.surface, padding: '24px', borderRadius: '24px', border: `1px solid ${C.border}`, color: C.text, fontSize: '18px', textAlign: 'left' }}>{e.label}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {view === 'response' && (
+        <div className="fade-in" style={{ padding: '80px 28px', textAlign: 'center' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '42px', color: C.text }}>{RESP[EMOTIONS[step].id].msg}</h2>
+          <p style={{ color: C.muted, margin: '20px 0 60px', fontSize: '18px' }}>{RESP[EMOTIONS[step].id].sub}</p>
+          <button onClick={() => nav(RESP[EMOTIONS[step].id].next)} style={{ width: '100%', height: '64px', background: C.green, borderRadius: '22px', fontSize: '17px', fontWeight: '600' }}>{RESP[EMOTIONS[step].id].btn}</button>
+        </div>
+      )}
+
+      {view === 'reset' && (
+        <div className="fade-in" style={{ padding: '60px 28px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <p style={{ color: C.greenL, letterSpacing: '0.2em', fontSize: '12px' }}>BREATH RESET</p>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BreathOrb />
+          </div>
+          <button onClick={() => nav('home')} style={{ width: '100%', height: '64px', background: C.surface, border: `1px solid ${C.border}`, color: C.text, borderRadius: '22px' }}>Finish Reset</button>
+        </div>
+      )}
+
+      {view === 'home' && (
+        <div className="fade-in" style={{ padding: '60px 24px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '32px', color: C.text, marginBottom: '30px' }}>Welcome to Peace.</h2>
+          <button onClick={() => nav('checkin')} style={{ width: '100%', padding: '24px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: '24px', color: C.text, textAlign: 'left' }}>
+            <p style={{ fontSize: '18px' }}>Daily Check-in</p>
+            <p style={{ fontSize: '14px', color: C.muted }}>Return to center</p>
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
-const root=ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App/>);
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
 </script>
 </body>
 </html>
