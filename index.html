@@ -134,17 +134,17 @@ const NIGHT_STEPS=[
 const MEDITATIONS=[
   {
     id:"morning",title:"Morning Awakening",tagline:"Begin your day with intention",
-    duration:"5 min",badge:"Morning",sound:"forest",
+    duration:"5 min",badge:"Morning",sound:"morning",
     img:"https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=75",
     grad:"rgba(10,30,15,.6)",
     segs:[
-      {text:"Find a comfortable position.\n\nClose your eyes gently.",s:12},
+      {text:"Find a comfortable position.\n\nTake a slow breath and settle in.",s:12},
       {text:"Take a slow breath in through your nose...\n\nAnd let it all the way out.",s:14},
       {text:"Today is a new beginning.\n\nWhatever yesterday held, it is behind you now.\nThis moment is completely fresh.",s:18},
       {text:"Breathe in again, and as you do, imagine breathing in clarity.\n\nAnd as you breathe out... release anything that doesn't belong to today.",s:18},
       {text:"Think of one intention for today.\n\nNot a goal. Not a task.\n\nJust one word — one way you want to move through this day.",s:20},
       {text:"Let that word settle into your body.\n\nYou don't have to figure out how.\nJust carry it gently.",s:18},
-      {text:"Take one final deep breath...\n\nAnd open your eyes when you're ready.\n\nThis day belongs to you.",s:16},
+      {text:"Take one final deep breath...\n\nAnd when you're ready, step into this day.\n\nThis day belongs to you.",s:16},
     ]
   },
   {
@@ -164,12 +164,12 @@ const MEDITATIONS=[
   },
   {
     id:"stillness",title:"Inner Stillness",tagline:"Find the quiet beneath the noise",
-    duration:"5 min",badge:"Anytime",sound:"forest",
+    duration:"5 min",badge:"Anytime",sound:"bowl",
     img:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=75",
     grad:"rgba(8,18,35,.65)",
     segs:[
       {text:"Let everything go quiet for a moment.\n\nYou don't have to figure anything out right now.",s:14},
-      {text:"Close your eyes.\n\nJust listen to your breath.\n\nIn... and out. Slow and easy.",s:16},
+      {text:"Soften your gaze and let your shoulders drop.\n\nBreathe slowly.\n\nIn... and out. Calm and easy.",s:16},
       {text:"Beneath all the thoughts, beneath all the noise...\n\nthere is a stillness that has always been there.\n\nIt belongs to you.",s:18},
       {text:"You don't have to earn access to this stillness.\n\nYou don't have to be perfect to feel it.\n\nIt's already here. It's always here.",s:18},
       {text:"Let your thoughts come and go like clouds.\n\nYou are not the cloud.\n\nYou are the sky.",s:16},
@@ -179,7 +179,7 @@ const MEDITATIONS=[
   },
   {
     id:"gratitude",title:"Heart of Gratitude",tagline:"Open your heart to what is good",
-    duration:"5 min",badge:"Anytime",sound:"ocean",
+    duration:"5 min",badge:"Anytime",sound:"chime",
     img:"https://images.unsplash.com/photo-1439405326854-014607f694d7?w=800&q=75",
     grad:"rgba(30,15,8,.6)",
     segs:[
@@ -210,12 +210,12 @@ const MEDITATIONS=[
   },
   {
     id:"sleep",title:"Deep Sleep Journey",tagline:"Drift gently into rest",
-    duration:"8 min",badge:"Night",sound:"rain",
+    duration:"8 min",badge:"Night",sound:"delta",
     img:"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=75",
     grad:"rgba(3,3,18,.7)",
     segs:[
-      {text:"You are safe.\n\nYou are horizontal.\n\nYou are allowed to sleep.",s:14},
-      {text:"Let your eyes close.\n\nLet your breath slow.\n\nThere is nothing you need to do.",s:16},
+      {text:"You are safe.\n\nYou are held.\n\nYou are allowed to rest completely.",s:14},
+      {text:"Let your body grow heavy.\n\nLet your breath slow.\n\nThere is nothing you need to do right now.",s:16},
       {text:"Breathe in for 4...\n\nHold for 7...\n\nBreathe out for 8...",s:20},
       {text:"Your body is growing heavier with each breath.\n\nYour muscles are letting go one by one.\n\nYou don't have to hold anything.",s:18},
       {text:"Let your thoughts drift by like gentle clouds.\n\nYou don't need to follow them.\n\nJust watch them pass.",s:18},
@@ -556,68 +556,189 @@ function CalmFlow({c,onDone}){
 }
 
 /* ═════════════════════════════════════════════════════════════
+   MEDITATION SOUND ENGINE — unique calming soundscape per session
+═════════════════════════════════════════════════════════════ */
+function _mkNoiseBuf(ctx){
+  const sr=ctx.sampleRate;
+  const buf=ctx.createBuffer(2,6*sr,sr);
+  for(let ch=0;ch<2;ch++){
+    const d=buf.getChannelData(ch);
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(let i=0;i<d.length;i++){
+      const w=Math.random()*2-1;
+      b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;
+      b2=.96900*b2+w*.1538520;b3=.86650*b3+w*.3104856;
+      b4=.55000*b4+w*.5329522;b5=-.7616*b5-w*.0168980;
+      d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*0.11;b6=w*.115926;
+    }
+  }
+  return buf;
+}
+
+function _noise(ctx,ftype,freq,vol,Q,nodes,dest){
+  const src=ctx.createBufferSource();
+  src.buffer=_mkNoiseBuf(ctx);src.loop=true;
+  const f=ctx.createBiquadFilter();
+  f.type=ftype;f.frequency.value=freq;if(Q)f.Q.value=Q;
+  const g=ctx.createGain();g.gain.value=vol;
+  src.connect(f);f.connect(g);g.connect(dest);
+  src.start(0);nodes.push(src);
+}
+
+function startMedSound(type){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    const ctx=new AC();
+    if(ctx.state==="suspended")ctx.resume();
+    /* iOS unlock — play silent sample synchronously */
+    const ub=ctx.createBuffer(1,1,22050);
+    const us=ctx.createBufferSource();
+    us.buffer=ub;us.connect(ctx.destination);us.start(0);
+
+    const master=ctx.createGain();master.gain.value=0;
+    master.connect(ctx.destination);
+    const N=[];
+
+    if(type==="morning"){
+      /* Soft nature dawn — gentle ambience + distant bird tones */
+      _noise(ctx,"lowpass",900,0.4,0.8,N,master);
+      [[1320,0.022,5.1],[880,0.016,3.7],[1760,0.01,7.3]].forEach(([f,v,lf])=>{
+        const osc=ctx.createOscillator();osc.type="sine";osc.frequency.value=f;
+        const lfo=ctx.createOscillator();lfo.frequency.value=lf;
+        const lg=ctx.createGain();lg.gain.value=f*0.012;
+        lfo.connect(lg);lg.connect(osc.frequency);
+        const g=ctx.createGain();g.gain.value=v;
+        osc.connect(g);g.connect(master);
+        osc.start();lfo.start();N.push(osc,lfo);
+      });
+
+    } else if(type==="rain"){
+      /* Soft steady rain */
+      _noise(ctx,"lowpass",1100,0.82,0.6,N,master);
+      _noise(ctx,"highpass",80,0.22,0.5,N,master);
+
+    } else if(type==="bowl"){
+      /* Singing bowl at 432 Hz — pure, resonant, meditative */
+      [[432,0.13],[432*1.5,0.052],[432*2.756,0.026]].forEach(([f,v])=>{
+        const osc=ctx.createOscillator();osc.type="sine";osc.frequency.value=f;
+        const trem=ctx.createOscillator();trem.frequency.value=0.26;
+        const tg=ctx.createGain();tg.gain.value=v*0.11;
+        trem.connect(tg);
+        const g=ctx.createGain();g.gain.value=v;
+        tg.connect(g.gain);
+        osc.connect(g);g.connect(master);
+        osc.start();trem.start();N.push(osc,trem);
+      });
+      _noise(ctx,"lowpass",180,0.1,1,N,master);
+
+    } else if(type==="chime"){
+      /* Warm C-major pad — soft detuned sines, like distant piano */
+      [261.63,329.63,392,523.25].forEach((f,i)=>{
+        const det=i%2===0?1.4:-1.4;
+        [[0,0.055],[det,0.018],[-det,0.018]].forEach(([d,v])=>{
+          const osc=ctx.createOscillator();osc.type="sine";
+          osc.frequency.value=f+d;
+          const g=ctx.createGain();g.gain.value=v;
+          osc.connect(g);g.connect(master);osc.start();N.push(osc);
+        });
+      });
+      _noise(ctx,"lowpass",280,0.07,1,N,master);
+
+    } else if(type==="ocean"){
+      /* Ocean waves — pink noise with slow rhythmic LFO sweep */
+      const src=ctx.createBufferSource();
+      src.buffer=_mkNoiseBuf(ctx);src.loop=true;
+      const filt=ctx.createBiquadFilter();
+      filt.type="lowpass";filt.frequency.value=380;filt.Q.value=2.8;
+      const waveLFO=ctx.createOscillator();waveLFO.frequency.value=0.09;
+      const waveLG=ctx.createGain();waveLG.gain.value=230;
+      waveLFO.connect(waveLG);waveLG.connect(filt.frequency);
+      const g=ctx.createGain();g.gain.value=0.88;
+      src.connect(filt);filt.connect(g);g.connect(master);
+      src.start(0);waveLFO.start();N.push(src,waveLFO);
+
+    } else if(type==="delta"){
+      /* Deep sleep — low resonance + soft 2Hz isochronic pulse */
+      [[40,0.08],[60,0.04],[80,0.02]].forEach(([f,v])=>{
+        const osc=ctx.createOscillator();osc.type="sine";osc.frequency.value=f;
+        const g=ctx.createGain();g.gain.value=v;
+        osc.connect(g);g.connect(master);osc.start();N.push(osc);
+      });
+      const car=ctx.createOscillator();car.frequency.value=100;car.type="sine";
+      const plg=ctx.createGain();plg.gain.value=0.038;
+      const pLFO=ctx.createOscillator();pLFO.frequency.value=2;
+      const pLG=ctx.createGain();pLG.gain.value=0.038;
+      pLFO.connect(pLG);pLG.connect(plg.gain);
+      car.connect(plg);plg.connect(master);
+      car.start();pLFO.start();N.push(car,pLFO);
+      _noise(ctx,"lowpass",150,0.2,1,N,master);
+    }
+
+    master.gain.linearRampToValueAtTime(1,ctx.currentTime+2.8);
+
+    return ()=>{
+      try{
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.linearRampToValueAtTime(0,ctx.currentTime+1.2);
+        setTimeout(()=>{
+          try{N.forEach(n=>{try{n.stop();}catch(e){}});ctx.close();}catch(e){}
+        },1400);
+      }catch(e){}
+    };
+  }catch(e){ return ()=>{}; }
+}
+
+const MED_SOUND_LABELS={
+  morning:"🌿 Nature sounds",
+  rain:   "🌧 Soft rain",
+  bowl:   "🎵 Singing bowl",
+  chime:  "✨ Warm tones",
+  ocean:  "🌊 Ocean waves",
+  delta:  "🌙 Deep calm tones",
+};
+
+/* ═════════════════════════════════════════════════════════════
    GUIDED MEDITATION PLAYER
    Fixes: blank screens, close-your-eyes UX, voice narration
 ═════════════════════════════════════════════════════════════ */
-function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundOn}){
+function MeditationPlayer({med,c,onClose,setSoundOn,setSound}){
   const [started,  setStarted] =useState(false);
   const [segIdx,   setSegIdx]  =useState(0);
   const [done,     setDone]    =useState(false);
   const [paused,   setPaused]  =useState(false);
-  const [voiceOn,  setVoiceOn] =useState(true);  // voice ON by default
   const textRef    =useRef(null);
   const timerRef   =useRef(null);
   const pausedRef  =useRef(false);
-  const firstSeg   =useRef(true);   // true until first segment is shown
+  const firstSeg   =useRef(true);
+  const stopSndRef =useRef(null);   /* holds the meditation's own stop fn */
   const NB         ="#0D0E1A";
 
-  /* ── VOICE NARRATION via Web Speech API ── */
-  const speak=useCallback((text)=>{
-    if(!voiceOn) return;
-    try{
-      window.speechSynthesis.cancel();
-      const u=new SpeechSynthesisUtterance(
-        text.replace(/\n+/g," ").replace(/\.\.\./g,". ")
-      );
-      u.rate=0.82;    // slow, calm pace
-      u.pitch=0.95;   // slightly lower, soothing
-      u.volume=1;
-      /* Prefer a female voice on devices that have one */
-      const voices=window.speechSynthesis.getVoices();
-      const preferred=voices.find(v=>
-        v.lang.startsWith("en")&&(v.name.includes("Samantha")||
-        v.name.includes("Karen")||v.name.includes("Moira")||
-        v.name.includes("Fiona")||v.name.toLowerCase().includes("female"))
-      )||voices.find(v=>v.lang.startsWith("en"))||voices[0];
-      if(preferred) u.voice=preferred;
-      window.speechSynthesis.speak(u);
-    }catch(e){}
-  },[voiceOn]);
-
-  /* ── Start meditation ── */
+  /* ── Start meditation with its own unique sound ── */
   const begin=()=>{
     setStarted(true);
-    sStart(med.sound);
-    setSoundOn(true);
-    setSound(med.sound);
+    /* startMedSound creates its own AudioContext synchronously (iOS safe) */
+    stopSndRef.current=startMedSound(med.sound);
   };
 
-  /* ── useLayoutEffect: fires BEFORE browser paints ──
-     On first segment: content appears immediately (no fade-in animation).
-     On subsequent segments: content was already faded out before setSegIdx
-     was called, so here we just animate it back in. */
+  /* ── Cleanup: stop meditation sound, reset home screen state ── */
+  const cleanup=()=>{
+    clearTimeout(timerRef.current);
+    if(stopSndRef.current){ stopSndRef.current(); stopSndRef.current=null; }
+    setSoundOn(false);
+    setSound("silence");
+  };
+
+  /* ── useLayoutEffect fires BEFORE browser paints — no blink ── */
   useLayoutEffect(()=>{
     if(!started) return;
     const el=textRef.current;
     if(!el) return;
     if(firstSeg.current){
-      /* First time showing player — just make visible immediately */
       firstSeg.current=false;
       el.style.transition="none";
       el.style.opacity="1";
       el.style.transform="translateY(0)";
     } else {
-      /* Segment changed — was faded out before setSegIdx, now fade back in */
       el.style.transition="none";
       el.style.opacity="0";
       el.style.transform="translateY(10px)";
@@ -627,8 +748,6 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
         el.style.transform="translateY(0)";
       });
     }
-    /* Speak the text aloud for eyes-closed users */
-    speak(med.segs[segIdx].text);
   },[segIdx,started]);
 
   /* ── Auto-advance timer ── */
@@ -651,20 +770,10 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
     return()=>clearTimeout(timerRef.current);
   },[segIdx,started,done]);
 
-  /* Toggle voice */
-  const toggleVoice=()=>{
-    try{ window.speechSynthesis.cancel(); }catch(e){}
-    setVoiceOn(v=>!v);
-  };
-
   const togglePause=()=>{
     pausedRef.current=!pausedRef.current;
     setPaused(p=>!p);
-    if(pausedRef.current){
-      try{ window.speechSynthesis.cancel(); }catch(e){}
-    } else {
-      /* Resume: re-speak current segment then restart timer */
-      speak(med.segs[segIdx].text);
+    if(!pausedRef.current){
       const el=textRef.current;
       clearTimeout(timerRef.current);
       timerRef.current=setTimeout(()=>{
@@ -679,7 +788,6 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
 
   const advanceSeg=()=>{
     clearTimeout(timerRef.current);
-    try{ window.speechSynthesis.cancel(); }catch(e){}
     const el=textRef.current;
     if(segIdx>=med.segs.length-1){
       if(el){el.style.transition="opacity .4s ease";el.style.opacity="0";}
@@ -689,11 +797,6 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
     if(el){el.style.transition="opacity .3s ease";el.style.opacity="0";}
     setTimeout(()=>setSegIdx(i=>i+1),340);
   };
-
-  /* ── Cleanup speech on unmount ── */
-  useEffect(()=>{
-    return()=>{ try{ window.speechSynthesis.cancel(); }catch(e){} };
-  },[]);
 
   const prog=((segIdx+1)/med.segs.length)*100;
 
@@ -712,7 +815,7 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
         fontWeight:300,color:"#E8E2D8",marginBottom:"16px"}}>Complete.</h2>
       <p style={{fontSize:"17px",color:"#545470",lineHeight:1.78,
         maxWidth:"280px",margin:"0 auto 48px"}}>Carry this stillness with you.</p>
-      <button onClick={()=>{sStop();onClose();}}
+      <button onClick={()=>{cleanup();onClose();}}
         style={{background:"#526D6A",color:"#fff",border:"none",
           padding:"20px 48px",borderRadius:"100px",fontSize:"16px",fontWeight:500}}>
         Return Home
@@ -743,20 +846,10 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
             </h1>
             <p style={{fontSize:"17px",color:"rgba(255,255,255,.72)",
               lineHeight:1.65,marginBottom:"32px"}}>{med.tagline}</p>
-            <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"14px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"28px"}}>
               <span style={{fontSize:"14px",color:"rgba(255,255,255,.5)"}}>
-                {med.sound==="rain"?"🌧 Rain plays during this session":
-                 med.sound==="ocean"?"🌊 Ocean plays during this session":
-                 "🌿 Forest plays during this session"}
+                {MED_SOUND_LABELS[med.sound]||"🎵 Calming sound"} plays during this session
               </span>
-            </div>
-            {/* Voice note */}
-            <div style={{background:"rgba(255,255,255,.08)",borderRadius:"12px",
-              padding:"12px 16px",marginBottom:"28px",
-              border:"1px solid rgba(255,255,255,.12)"}}>
-              <p style={{fontSize:"13px",color:"rgba(255,255,255,.6)",lineHeight:1.6}}>
-                🎙 Voice guidance is on — you can close your eyes and just listen.
-              </p>
             </div>
             <button onClick={begin}
               style={{background:"rgba(255,255,255,.15)",backdropFilter:"blur(12px)",
@@ -780,11 +873,9 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
         <div style={{height:"100vh",display:"flex",flexDirection:"column",
           padding:"44px 28px 48px"}}>
 
-          {/* Top bar — close · progress · pause · voice */}
+          {/* Top bar — close · progress · pause */}
           <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"24px"}}>
-            <button onClick={()=>{clearTimeout(timerRef.current);
-              try{window.speechSynthesis.cancel();}catch(e){}
-              sStop();onClose();}}
+            <button onClick={()=>{cleanup();onClose();}}
               style={{background:"rgba(255,255,255,.1)",border:"none",
                 borderRadius:"100px",padding:"8px 14px",fontSize:"13px",
                 color:"rgba(255,255,255,.7)",flexShrink:0}}>✕</button>
@@ -796,16 +887,6 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
                 background:"rgba(143,175,168,.7)",borderRadius:"1px",
                 transition:"width 1s ease"}}/>
             </div>
-
-            {/* Voice toggle */}
-            <button onClick={toggleVoice}
-              style={{background:voiceOn?"rgba(82,109,106,.4)":"rgba(255,255,255,.08)",
-                border:`1px solid ${voiceOn?"rgba(143,175,168,.5)":"rgba(255,255,255,.15)"}`,
-                borderRadius:"100px",padding:"8px 12px",fontSize:"14px",
-                color:voiceOn?"#8FAFA8":"rgba(255,255,255,.5)",flexShrink:0,
-                transition:"all .25s"}}>
-              {voiceOn?"🔊":"🔇"}
-            </button>
 
             {/* Pause toggle */}
             <button onClick={togglePause}
@@ -844,11 +925,7 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
           {/* Eyes-closed hint + advance button */}
           <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"12px"}}>
             <p style={{fontSize:"11px",color:"rgba(255,255,255,.28)",letterSpacing:".06em",textAlign:"center"}}>
-              {paused
-                ? "PAUSED"
-                : voiceOn
-                  ? "EYES CLOSED · JUST LISTEN · AUTO-ADVANCING"
-                  : "AUTO-ADVANCING · TAP NEXT TO SKIP"}
+              {paused ? "PAUSED" : "AUTO-ADVANCING · TAP NEXT TO SKIP"}
             </p>
             <button onClick={advanceSeg}
               style={{background:"rgba(255,255,255,.08)",
@@ -1026,7 +1103,7 @@ function ResetApp(){
 
   /* Active meditation overlay */
   if(activeMed) return(<MeditationPlayer med={activeMed} c={c} onClose={()=>setActiveMed(null)}
-    sStart={sStart} sStop={sStop} soundOn={soundOn} setSound={setSound} setSoundOn={setSoundOn}/>);
+    setSoundOn={setSoundOn} setSound={setSound}/>);
 
   /* ── SPLASH ── */
   if(view==="splash") return(<div style={{...W,display:"flex",alignItems:"center",justifyContent:"center",height:"100vh"}}>
