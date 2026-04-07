@@ -7,62 +7,101 @@
   <title>Reset – Your Daily Peace System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
-  
+ 
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
   <style>
-    /* FIX: Prevent white blink on navigation */
     :root { --bg: #0A0F0D; }
-    html, body { 
-      background-color: var(--bg) !important; 
-      margin: 0; 
-      padding: 0; 
-      width: 100%; 
-      height: 100%; 
-      -webkit-backface-visibility: hidden; 
-      -webkit-perspective: 1000;
+    html, body {
+      background-color: var(--bg) !important;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
-    #root { 
-      background-color: var(--bg); 
-      min-height: 100vh; 
-      -webkit-backface-visibility: hidden; 
+    #root {
+      background-color: var(--bg) !important;
+      min-height: 100vh;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    /* Smooth view transitions */
+    .view-wrapper {
+      position: absolute;
+      inset: 0;
+      opacity: 1;
+      transition: opacity 300ms ease-in-out;
+      pointer-events: all;
+    }
+    .view-wrapper.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    button { font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; outline: none; }
-    @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(82, 109, 106, 0.1); } 50% { box-shadow: 0 0 40px rgba(82, 109, 106, 0.3); } }
+    button { 
+      font-family: 'DM Sans', sans-serif; 
+      cursor: pointer; 
+      border: none; 
+      outline: none; 
+    }
+    @keyframes glow { 
+      0%, 100% { box-shadow: 0 0 20px rgba(82, 109, 106, 0.1); } 
+      50% { box-shadow: 0 0 40px rgba(82, 109, 106, 0.3); } 
+    }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useRef } = React;
-const C = { bg: "#0A0F0D", surface: "#141A18", border: "#232A28", green: "#526D6A", greenL: "#8FAFA8", text: "#E8E2D8", muted: "#A8A298" };
+const { useState, useEffect, useRef, useLayoutEffect } = React;
+
+const C = { 
+  bg: "#0A0F0D", 
+  surface: "#141A18", 
+  border: "#232A28", 
+  green: "#526D6A", 
+  greenL: "#8FAFA8", 
+  text: "#E8E2D8", 
+  muted: "#A8A298" 
+};
 
 const AUDIO_URL = "https://assets.mixkit.co/music/preview/mixkit-forest-rain-ambience-1210.mp3";
 
 function App() {
   const [view, setView] = useState('checkin');
   const [step, setStep] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   const audioRef = useRef(new Audio(AUDIO_URL));
 
   useEffect(() => {
     const audio = audioRef.current;
     audio.loop = true;
     audio.volume = 0.4;
-    return () => { audio.pause(); };
+    return () => audio.pause();
   }, []);
 
   const startPeace = (index) => {
     audioRef.current.play().catch(() => {});
-    setStep(index);
-    setView('response');
-    window.scrollTo(0, 0);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setStep(index);
+      setView('response');
+      setIsTransitioning(false);
+      window.scrollTo(0, 0);
+    }, 150);
   };
 
-  const nav = (v) => { setView(v); window.scrollTo(0, 0); };
+  const nav = (v) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setView(v);
+      setIsTransitioning(false);
+      window.scrollTo(0, 0);
+    }, 150);
+  };
 
   const EMOTIONS = [
     { id: "overwhelmed", label: "Overwhelmed", msg: "Slow down.", sub: "One breath is enough." },
@@ -72,44 +111,109 @@ function App() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', color: C.text, backgroundColor: C.bg }}>
-      
-      {view === 'checkin' && (
-        <div style={{ padding: '60px 28px' }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '38px', textAlign: 'center', marginBottom: '40px' }}>How is your mind?</h2>
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {EMOTIONS.map((e, i) => (
-              <button key={e.id} onClick={() => startPeace(i)} style={{ background: C.surface, padding: '24px', borderRadius: '24px', border: `1px solid ${C.border}`, color: C.text, fontSize: '18px', textAlign: 'left' }}>{e.label}</button>
-            ))}
-          </div>
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: C.bg, 
+      color: C.text,
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Check-in View */}
+      <div className={`view-wrapper ${view !== 'checkin' ? 'hidden' : ''}`} style={{ padding: '60px 28px' }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '38px', textAlign: 'center', marginBottom: '40px' }}>
+          How is your mind?
+        </h2>
+        <div style={{ display: 'grid', gap: '16px' }}>
+          {EMOTIONS.map((e, i) => (
+            <button 
+              key={e.id} 
+              onClick={() => startPeace(i)} 
+              style={{ 
+                background: C.surface, 
+                padding: '24px', 
+                borderRadius: '24px', 
+                border: `1px solid ${C.border}`, 
+                color: C.text, 
+                fontSize: '18px', 
+                textAlign: 'left' 
+              }}
+            >
+              {e.label}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
-      {view === 'response' && (
-        <div style={{ padding: '80px 28px', textAlign: 'center' }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '42px' }}>{EMOTIONS[step].msg}</h2>
-          <p style={{ color: C.muted, margin: '20px 0 60px', fontSize: '18px' }}>{EMOTIONS[step].sub}</p>
-          <button onClick={() => nav('reset')} style={{ width: '100%', height: '64px', background: C.green, borderRadius: '22px', fontSize: '17px', color: C.bg, fontWeight: '600' }}>Start Reset</button>
-        </div>
-      )}
+      {/* Response View */}
+      <div className={`view-wrapper ${view !== 'response' ? 'hidden' : ''}`} style={{ padding: '80px 28px', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '42px' }}>{EMOTIONS[step].msg}</h2>
+        <p style={{ color: C.muted, margin: '20px 0 60px', fontSize: '18px' }}>{EMOTIONS[step].sub}</p>
+        <button 
+          onClick={() => nav('reset')} 
+          style={{ 
+            width: '100%', 
+            height: '64px', 
+            background: C.green, 
+            borderRadius: '22px', 
+            fontSize: '17px', 
+            color: C.bg, 
+            fontWeight: '600' 
+          }}
+        >
+          Start Reset
+        </button>
+      </div>
 
-      {view === 'reset' && (
-        <div style={{ padding: '60px 28px', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ color: C.greenL, letterSpacing: '0.2em', fontSize: '12px', marginBottom: '40px' }}>BREATHING IN SYNC WITH RAIN</p>
-          <BreathOrb />
-          <button onClick={() => nav('home')} style={{ width: '100%', height: '64px', background: C.surface, border: `1px solid ${C.border}`, color: C.text, borderRadius: '22px', marginTop: '40px' }}>Finish</button>
-        </div>
-      )}
+      {/* Reset / Breathing View */}
+      <div className={`view-wrapper ${view !== 'reset' ? 'hidden' : ''}`} style={{ 
+        padding: '60px 28px', 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center' 
+      }}>
+        <p style={{ color: C.greenL, letterSpacing: '0.2em', fontSize: '12px', marginBottom: '40px' }}>
+          BREATHING IN SYNC WITH RAIN
+        </p>
+        <BreathOrb />
+        <button 
+          onClick={() => nav('home')} 
+          style={{ 
+            width: '100%', 
+            height: '64px', 
+            background: C.surface, 
+            border: `1px solid ${C.border}`, 
+            color: C.text, 
+            borderRadius: '22px', 
+            marginTop: '40px' 
+          }}
+        >
+          Finish
+        </button>
+      </div>
 
-      {view === 'home' && (
-        <div style={{ padding: '60px 24px' }}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '32px', marginBottom: '30px' }}>Welcome to Peace.</h2>
-          <button onClick={() => nav('checkin')} style={{ width: '100%', padding: '24px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: '24px', color: C.text, textAlign: 'left' }}>
-            <p style={{ fontSize: '18px' }}>Daily Check-in</p>
-            <p style={{ fontSize: '14px', color: C.muted }}>Return to center</p>
-          </button>
-        </div>
-      )}
+      {/* Home View */}
+      <div className={`view-wrapper ${view !== 'home' ? 'hidden' : ''}`} style={{ padding: '60px 24px' }}>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '32px', marginBottom: '30px' }}>
+          Welcome to Peace.
+        </h2>
+        <button 
+          onClick={() => nav('checkin')} 
+          style={{ 
+            width: '100%', 
+            padding: '24px', 
+            background: C.surface, 
+            border: `1px solid ${C.border}`, 
+            borderRadius: '24px', 
+            color: C.text, 
+            textAlign: 'left' 
+          }}
+        >
+          <p style={{ fontSize: '18px' }}>Daily Check-in</p>
+          <p style={{ fontSize: '14px', color: C.muted }}>Return to center</p>
+        </button>
+      </div>
     </div>
   );
 }
@@ -118,18 +222,41 @@ function BreathOrb() {
   const [ph, setPh] = useState(0);
   const [cnt, setCnt] = useState(4);
   const timer = useRef(null);
-  useEffect(() => {
-    let c = ph === 2 ? 6 : 4; setCnt(c); clearInterval(timer.current);
+
+  useLayoutEffect(() => {   // Changed to useLayoutEffect for smoother count updates
+    let c = ph === 2 ? 6 : 4;
+    setCnt(c);
+    clearInterval(timer.current);
+
     timer.current = setInterval(() => {
-      c--; if (c <= 0) { clearInterval(timer.current); setPh((p) => (p + 1) % 3); } else setCnt(c);
+      c--;
+      if (c <= 0) {
+        clearInterval(timer.current);
+        setPh((p) => (p + 1) % 3);
+      } else {
+        setCnt(c);
+      }
     }, 1000);
+
     return () => clearInterval(timer.current);
   }, [ph]);
+
   return (
-    <div style={{ width: 200, height: 200, borderRadius: '50%', border: `2px solid ${C.green}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'glow 4s infinite' }}>
+    <div style={{ 
+      width: 200, 
+      height: 200, 
+      borderRadius: '50%', 
+      border: `2px solid ${C.green}40`, 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      animation: 'glow 4s infinite' 
+    }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '64px' }}>{cnt}</div>
-        <div style={{ fontSize: '12px', letterSpacing: '0.2em', color: C.greenL }}>{ph === 0 ? "IN" : ph === 1 ? "HOLD" : "OUT"}</div>
+        <div style={{ fontSize: '12px', letterSpacing: '0.2em', color: C.greenL }}>
+          {ph === 0 ? "IN" : ph === 1 ? "HOLD" : "OUT"}
+        </div>
       </div>
     </div>
   );
