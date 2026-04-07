@@ -12,22 +12,28 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-<style>
-/* THE ONLY CHANGE: This block stops the white blink by locking the color early */
-:root { --bg: #0A0F0D; }
-html, body { 
-  background-color: var(--bg) !important; 
-  margin: 0; 
-  padding: 0; 
-  width: 100%; 
-  height: 100%; 
-}
-#root { background-color: var(--bg); min-height: 100vh; }
+  <style>
+    /* FIX: Prevent white blink on navigation */
+    :root { --bg: #0A0F0D; }
+    html, body { 
+      background-color: var(--bg) !important; 
+      margin: 0; 
+      padding: 0; 
+      width: 100%; 
+      height: 100%; 
+      -webkit-backface-visibility: hidden; 
+      -webkit-perspective: 1000;
+    }
+    #root { 
+      background-color: var(--bg); 
+      min-height: 100vh; 
+      -webkit-backface-visibility: hidden; 
+    }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-button { font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; outline: none; }
-@keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(82, 109, 106, 0.1); } 50% { box-shadow: 0 0 40px rgba(82, 109, 106, 0.3); } }
-</style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    button { font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; outline: none; }
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(82, 109, 106, 0.1); } 50% { box-shadow: 0 0 40px rgba(82, 109, 106, 0.3); } }
+  </style>
 </head>
 <body>
 <div id="root"></div>
