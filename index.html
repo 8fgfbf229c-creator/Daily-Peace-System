@@ -243,108 +243,103 @@ const RESP={
 
 /* ═══════════════ SOUND ENGINE ═══════════════ */
 function useSoundEngine(){
-  const ctxRef =useRef(null);
-  const srcRef =useRef(null);
-  const gainRef=useRef(null);
+  const ctxRef  =useRef(null);
+  const nodeRef =useRef({src:null,gain:null});
 
   const stop=useCallback(()=>{
     try{
-      if(gainRef.current&&ctxRef.current){
-        gainRef.current.gain.cancelScheduledValues(ctxRef.current.currentTime);
-        gainRef.current.gain.linearRampToValueAtTime(0,ctxRef.current.currentTime+1.1);
+      const {gain,src}=nodeRef.current;
+      if(gain&&ctxRef.current){
+        const t=ctxRef.current.currentTime;
+        gain.gain.cancelScheduledValues(t);
+        gain.gain.setValueAtTime(gain.gain.value,t);
+        gain.gain.linearRampToValueAtTime(0,t+1.0);
       }
       setTimeout(()=>{
-        try{srcRef.current&&srcRef.current.stop();}catch(e){}
-        srcRef.current=null;
-      },1200);
+        try{nodeRef.current.src&&nodeRef.current.src.stop();}catch(e){}
+        nodeRef.current={src:null,gain:null};
+      },1100);
     }catch(e){}
   },[]);
 
   const start=useCallback((type)=>{
-    /* ── STEP 1: stop previous cleanly ── */
+    /* ── Stop previous nodes cleanly ── */
     try{
-      if(gainRef.current&&ctxRef.current){
-        gainRef.current.gain.cancelScheduledValues(ctxRef.current.currentTime);
-        gainRef.current.gain.linearRampToValueAtTime(0,ctxRef.current.currentTime+0.25);
+      const {gain,src}=nodeRef.current;
+      if(gain&&ctxRef.current){
+        const t=ctxRef.current.currentTime;
+        gain.gain.cancelScheduledValues(t);
+        gain.gain.setValueAtTime(gain.gain.value,t);
+        gain.gain.linearRampToValueAtTime(0,t+0.3);
       }
-      setTimeout(()=>{try{srcRef.current&&srcRef.current.stop();}catch(e){}},350);
+      setTimeout(()=>{try{nodeRef.current.src&&nodeRef.current.src.stop();}catch(e){}},400);
     }catch(e){}
 
-    /* ── STEP 2 (CRITICAL FOR iOS): create & resume AudioContext
-       SYNCHRONOUSLY inside this tap handler — no setTimeout wrapper.
-       iOS Safari revokes the user-gesture token after ~1 frame,
-       so AudioContext MUST be created here, in this call stack. ── */
+    /* ── Create or reuse AudioContext (never close between sounds) ── */
     try{
-      if(ctxRef.current&&ctxRef.current.state!=="closed"){
-        try{ctxRef.current.close();}catch(e){}
+      if(!ctxRef.current||ctxRef.current.state==="closed"){
+        const AC=window.AudioContext||window.webkitAudioContext;
+        ctxRef.current=new AC();
       }
-      const AC=window.AudioContext||window.webkitAudioContext;
-      ctxRef.current=new AC();
-    }catch(e){console.error("AudioContext create failed",e);return;}
+      /* Resume synchronously inside the gesture — critical for iOS */
+      if(ctxRef.current.state==="suspended") ctxRef.current.resume();
+    }catch(e){return;}
 
-    const ctx=ctxRef.current;
-
-    /* ── iOS UNLOCK: play a completely silent 1-sample buffer right now,
-       synchronously. This is the definitive iOS Safari unlock pattern.
-       After src.start() is called once in the gesture context, the
-       AudioContext is permanently unlocked — all future sounds work
-       even from async callbacks / Promises. ── */
+    /* ── iOS unlock: play silent 1-sample buffer synchronously ── */
     try{
-      const silentBuf=ctx.createBuffer(1,1,22050);
-      const silentSrc=ctx.createBufferSource();
-      silentSrc.buffer=silentBuf;
-      silentSrc.connect(ctx.destination);
-      silentSrc.start(0); /* ← this unlocks iOS audio for this context */
+      const ub=ctxRef.current.createBuffer(1,1,22050);
+      const us=ctxRef.current.createBufferSource();
+      us.buffer=ub;
+      us.connect(ctxRef.current.destination);
+      us.start(0);
     }catch(e){}
 
-    /* Resume must also be synchronous on iOS */
-    const doResume=ctx.state==="suspended"?ctx.resume():Promise.resolve();
-
-    /* ── STEP 3: buffer generation is CPU-heavy — safe to defer now
-       because the context is already unlocked by the tap above. ── */
-    doResume.then(()=>{
-      try{
-        const sr=ctx.sampleRate;
-        /* 6-second stereo pink-noise buffer */
-        const buf=ctx.createBuffer(2,6*sr,sr);
-        for(let ch=0;ch<2;ch++){
-          const d=buf.getChannelData(ch);
-          let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-          for(let i=0;i<d.length;i++){
-            const w=Math.random()*2-1;
-            b0=.99886*b0+w*.0555179; b1=.99332*b1+w*.0750759;
-            b2=.96900*b2+w*.1538520; b3=.86650*b3+w*.3104856;
-            b4=.55000*b4+w*.5329522; b5=-.7616*b5-w*.0168980;
-            d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*0.11;
-            b6=w*.115926;
-          }
+    /* ── Build and start audio SYNCHRONOUSLY ──
+       No Promise, no .then() — avoids async boundary issues on mobile.
+       Buffer generation is ~4ms, imperceptible to the user. ── */
+    try{
+      const ctx=ctxRef.current;
+      const sr=ctx.sampleRate;
+      const buf=ctx.createBuffer(2,6*sr,sr);
+      for(let ch=0;ch<2;ch++){
+        const d=buf.getChannelData(ch);
+        let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+        for(let i=0;i<d.length;i++){
+          const w=Math.random()*2-1;
+          b0=.99886*b0+w*.0555179; b1=.99332*b1+w*.0750759;
+          b2=.96900*b2+w*.1538520; b3=.86650*b3+w*.3104856;
+          b4=.55000*b4+w*.5329522; b5=-.7616*b5-w*.0168980;
+          d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*0.11;
+          b6=w*.115926;
         }
+      }
+      const src=ctx.createBufferSource();
+      src.buffer=buf; src.loop=true;
 
-        const src=ctx.createBufferSource();
-        src.buffer=buf; src.loop=true;
+      const f1=ctx.createBiquadFilter();
+      const f2=ctx.createBiquadFilter();
+      if(type==="rain"){
+        f1.type="lowpass";  f1.frequency.value=1100; f1.Q.value=0.5;
+        f2.type="highpass"; f2.frequency.value=80;   f2.Q.value=0.5;
+      } else if(type==="ocean"){
+        f1.type="lowpass";  f1.frequency.value=320;  f1.Q.value=2.5;
+        f2.type="highpass"; f2.frequency.value=25;   f2.Q.value=0.5;
+      } else {
+        f1.type="bandpass"; f1.frequency.value=680;  f1.Q.value=0.4;
+        f2.type="lowpass";  f2.frequency.value=1900; f2.Q.value=0.5;
+      }
 
-        const f1=ctx.createBiquadFilter();
-        const f2=ctx.createBiquadFilter();
-        if(type==="rain"){
-          f1.type="lowpass";  f1.frequency.value=1100; f1.Q.value=0.5;
-          f2.type="highpass"; f2.frequency.value=80;   f2.Q.value=0.5;
-        } else if(type==="ocean"){
-          f1.type="lowpass";  f1.frequency.value=320;  f1.Q.value=2.5;
-          f2.type="highpass"; f2.frequency.value=25;   f2.Q.value=0.5;
-        } else {
-          f1.type="bandpass"; f1.frequency.value=680;  f1.Q.value=0.4;
-          f2.type="lowpass";  f2.frequency.value=1900; f2.Q.value=0.5;
-        }
+      const gain=ctx.createGain();
+      /* setValueAtTime BEFORE ramp — required for reliable fade-in */
+      gain.gain.setValueAtTime(0,ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.45,ctx.currentTime+2.0);
 
-        const gain=ctx.createGain();
-        gain.gain.value=0;
-        src.connect(f1); f1.connect(f2); f2.connect(gain);
-        gain.connect(ctx.destination);
-        src.start(0);
-        gain.gain.linearRampToValueAtTime(0.17, ctx.currentTime+2.0);
-        srcRef.current=src; gainRef.current=gain;
-      }catch(e){console.error("Sound build failed",e);}
-    }).catch(e=>console.error("AudioContext resume failed",e));
+      src.connect(f1); f1.connect(f2); f2.connect(gain);
+      gain.connect(ctx.destination);
+      src.start(0);
+
+      nodeRef.current={src,gain};
+    }catch(e){console.error("Sound build failed",e);}
   },[]);
 
   return{start,stop};
