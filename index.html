@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 <title>Reset – Your Daily Peace System</title>
@@ -41,7 +40,7 @@ textarea{resize:none}
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect,useRef,useCallback}=React;
+const {useState,useEffect,useLayoutEffect,useRef,useCallback}=React;
 
 /* ═══════════════════════════ DATA ═══════════════════════════ */
 const GRATITUDE=[
@@ -243,50 +242,110 @@ const RESP={
 
 /* ═══════════════ SOUND ENGINE ═══════════════ */
 function useSoundEngine(){
-  const ctxRef=useRef(null);const srcRef=useRef(null);const gainRef=useRef(null);
+  const ctxRef =useRef(null);
+  const srcRef =useRef(null);
+  const gainRef=useRef(null);
+
   const stop=useCallback(()=>{
     try{
       if(gainRef.current&&ctxRef.current){
         gainRef.current.gain.cancelScheduledValues(ctxRef.current.currentTime);
         gainRef.current.gain.linearRampToValueAtTime(0,ctxRef.current.currentTime+1.1);
       }
-      setTimeout(()=>{try{srcRef.current&&srcRef.current.stop();}catch(e){}srcRef.current=null;},1200);
+      setTimeout(()=>{
+        try{srcRef.current&&srcRef.current.stop();}catch(e){}
+        srcRef.current=null;
+      },1200);
     }catch(e){}
   },[]);
+
   const start=useCallback((type)=>{
-    try{if(gainRef.current&&ctxRef.current){gainRef.current.gain.cancelScheduledValues(ctxRef.current.currentTime);gainRef.current.gain.linearRampToValueAtTime(0,ctxRef.current.currentTime+0.3);setTimeout(()=>{try{srcRef.current&&srcRef.current.stop();}catch(e){}},400);}
+    /* ── STEP 1: stop previous cleanly ── */
+    try{
+      if(gainRef.current&&ctxRef.current){
+        gainRef.current.gain.cancelScheduledValues(ctxRef.current.currentTime);
+        gainRef.current.gain.linearRampToValueAtTime(0,ctxRef.current.currentTime+0.25);
+      }
+      setTimeout(()=>{try{srcRef.current&&srcRef.current.stop();}catch(e){}},350);
     }catch(e){}
-    setTimeout(()=>{
+
+    /* ── STEP 2 (CRITICAL FOR iOS): create & resume AudioContext
+       SYNCHRONOUSLY inside this tap handler — no setTimeout wrapper.
+       iOS Safari revokes the user-gesture token after ~1 frame,
+       so AudioContext MUST be created here, in this call stack. ── */
+    try{
+      if(ctxRef.current&&ctxRef.current.state!=="closed"){
+        try{ctxRef.current.close();}catch(e){}
+      }
+      const AC=window.AudioContext||window.webkitAudioContext;
+      ctxRef.current=new AC();
+    }catch(e){console.error("AudioContext create failed",e);return;}
+
+    const ctx=ctxRef.current;
+
+    /* ── iOS UNLOCK: play a completely silent 1-sample buffer right now,
+       synchronously. This is the definitive iOS Safari unlock pattern.
+       After src.start() is called once in the gesture context, the
+       AudioContext is permanently unlocked — all future sounds work
+       even from async callbacks / Promises. ── */
+    try{
+      const silentBuf=ctx.createBuffer(1,1,22050);
+      const silentSrc=ctx.createBufferSource();
+      silentSrc.buffer=silentBuf;
+      silentSrc.connect(ctx.destination);
+      silentSrc.start(0); /* ← this unlocks iOS audio for this context */
+    }catch(e){}
+
+    /* Resume must also be synchronous on iOS */
+    const doResume=ctx.state==="suspended"?ctx.resume():Promise.resolve();
+
+    /* ── STEP 3: buffer generation is CPU-heavy — safe to defer now
+       because the context is already unlocked by the tap above. ── */
+    doResume.then(()=>{
       try{
-        if(ctxRef.current&&ctxRef.current.state!=="closed"){try{ctxRef.current.close();}catch(e){}}
-        ctxRef.current=new(window.AudioContext||window.webkitAudioContext)();
-        const ctx=ctxRef.current;
-        if(ctx.state==="suspended")ctx.resume();
         const sr=ctx.sampleRate;
-        const buf=ctx.createBuffer(2,8*sr,sr);
+        /* 6-second stereo pink-noise buffer */
+        const buf=ctx.createBuffer(2,6*sr,sr);
         for(let ch=0;ch<2;ch++){
           const d=buf.getChannelData(ch);
           let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
           for(let i=0;i<d.length;i++){
             const w=Math.random()*2-1;
-            b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.96900*b2+w*.1538520;
-            b3=.86650*b3+w*.3104856;b4=.55000*b4+w*.5329522;b5=-.7616*b5-w*.0168980;
-            d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*0.11;b6=w*.115926;
+            b0=.99886*b0+w*.0555179; b1=.99332*b1+w*.0750759;
+            b2=.96900*b2+w*.1538520; b3=.86650*b3+w*.3104856;
+            b4=.55000*b4+w*.5329522; b5=-.7616*b5-w*.0168980;
+            d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*0.11;
+            b6=w*.115926;
           }
         }
-        const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;
-        const f1=ctx.createBiquadFilter();const f2=ctx.createBiquadFilter();
-        if(type==="rain"){f1.type="lowpass";f1.frequency.value=1100;f1.Q.value=0.5;f2.type="highpass";f2.frequency.value=80;f2.Q.value=0.5;}
-        else if(type==="ocean"){f1.type="lowpass";f1.frequency.value=320;f1.Q.value=2.5;f2.type="highpass";f2.frequency.value=25;f2.Q.value=0.5;}
-        else{f1.type="bandpass";f1.frequency.value=680;f1.Q.value=0.4;f2.type="lowpass";f2.frequency.value=1900;f2.Q.value=0.5;}
-        const gain=ctx.createGain();gain.gain.value=0;
-        src.connect(f1);f1.connect(f2);f2.connect(gain);gain.connect(ctx.destination);
+
+        const src=ctx.createBufferSource();
+        src.buffer=buf; src.loop=true;
+
+        const f1=ctx.createBiquadFilter();
+        const f2=ctx.createBiquadFilter();
+        if(type==="rain"){
+          f1.type="lowpass";  f1.frequency.value=1100; f1.Q.value=0.5;
+          f2.type="highpass"; f2.frequency.value=80;   f2.Q.value=0.5;
+        } else if(type==="ocean"){
+          f1.type="lowpass";  f1.frequency.value=320;  f1.Q.value=2.5;
+          f2.type="highpass"; f2.frequency.value=25;   f2.Q.value=0.5;
+        } else {
+          f1.type="bandpass"; f1.frequency.value=680;  f1.Q.value=0.4;
+          f2.type="lowpass";  f2.frequency.value=1900; f2.Q.value=0.5;
+        }
+
+        const gain=ctx.createGain();
+        gain.gain.value=0;
+        src.connect(f1); f1.connect(f2); f2.connect(gain);
+        gain.connect(ctx.destination);
         src.start(0);
-        gain.gain.linearRampToValueAtTime(0.17,ctx.currentTime+2.2);
-        srcRef.current=src;gainRef.current=gain;
-      }catch(e){console.error(e);}
-    },480);
+        gain.gain.linearRampToValueAtTime(0.17, ctx.currentTime+2.0);
+        srcRef.current=src; gainRef.current=gain;
+      }catch(e){console.error("Sound build failed",e);}
+    }).catch(e=>console.error("AudioContext resume failed",e));
   },[]);
+
   return{start,stop};
 }
 
@@ -411,10 +470,9 @@ function CalmFlow({c,onDone}){
   const calmMounted=useRef(false);
   const aff=AFFIRMATIONS[(new Date().getDate()-1)%AFFIRMATIONS.length];
 
-  /* When idx changes, React updates DOM content, then we fade back in.
-     KEY: opacity is NOT in the JSX style below, so React never resets it.
-     Whatever opacity we set via ref persists through re-renders. */
-  useEffect(()=>{
+  /* useLayoutEffect fires BEFORE the browser paints — so opacity:0 is
+     applied before the new content is ever visible. No blink possible. */
+  useLayoutEffect(()=>{
     const el=contentRef.current;
     if(!el) return;
     if(!calmMounted.current){
@@ -424,18 +482,16 @@ function CalmFlow({c,onDone}){
       el.style.transform="translateX(0)";
       return;
     }
-    /* Subsequent step changes:
-       goNext() already set opacity→0 via ref before setIdx().
-       React re-rendered new content. Since opacity is NOT in JSX,
-       React did NOT reset it — it stayed at 0. Now fade the new content in. */
+    /* Lock opacity to 0 BEFORE browser paints the new content.
+       Then RAF animates it back in smoothly. */
     el.style.transition="none";
     el.style.opacity="0";
     el.style.transform="translateX(8px)";
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
       el.style.transition="opacity .32s ease, transform .32s ease";
       el.style.opacity="1";
       el.style.transform="translateX(0)";
-    }));
+    });
   },[idx]);
 
   const goNext=()=>{
@@ -499,18 +555,45 @@ function CalmFlow({c,onDone}){
 }
 
 /* ═════════════════════════════════════════════════════════════
-   GUIDED MEDITATION PLAYER — blink-free segment transitions
+   GUIDED MEDITATION PLAYER
+   Fixes: blank screens, close-your-eyes UX, voice narration
 ═════════════════════════════════════════════════════════════ */
 function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundOn}){
-  const [started,setStarted]=useState(false);
-  const [segIdx,setSegIdx]=useState(0);
-  const [done,setDone]=useState(false);
-  const [paused,setPaused]=useState(false);
-  const textRef=useRef(null);
-  const timerRef=useRef(null);
-  const pausedRef=useRef(false);
+  const [started,  setStarted] =useState(false);
+  const [segIdx,   setSegIdx]  =useState(0);
+  const [done,     setDone]    =useState(false);
+  const [paused,   setPaused]  =useState(false);
+  const [voiceOn,  setVoiceOn] =useState(true);  // voice ON by default
+  const textRef    =useRef(null);
+  const timerRef   =useRef(null);
+  const pausedRef  =useRef(false);
+  const firstSeg   =useRef(true);   // true until first segment is shown
+  const NB         ="#0D0E1A";
 
-  /* Start sound when meditation begins */
+  /* ── VOICE NARRATION via Web Speech API ── */
+  const speak=useCallback((text)=>{
+    if(!voiceOn) return;
+    try{
+      window.speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(
+        text.replace(/\n+/g," ").replace(/\.\.\./g,". ")
+      );
+      u.rate=0.82;    // slow, calm pace
+      u.pitch=0.95;   // slightly lower, soothing
+      u.volume=1;
+      /* Prefer a female voice on devices that have one */
+      const voices=window.speechSynthesis.getVoices();
+      const preferred=voices.find(v=>
+        v.lang.startsWith("en")&&(v.name.includes("Samantha")||
+        v.name.includes("Karen")||v.name.includes("Moira")||
+        v.name.includes("Fiona")||v.name.toLowerCase().includes("female"))
+      )||voices.find(v=>v.lang.startsWith("en"))||voices[0];
+      if(preferred) u.voice=preferred;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  },[voiceOn]);
+
+  /* ── Start meditation ── */
   const begin=()=>{
     setStarted(true);
     sStart(med.sound);
@@ -518,22 +601,36 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
     setSound(med.sound);
   };
 
-  /* When segment index changes, animate the text */
-  useEffect(()=>{
+  /* ── useLayoutEffect: fires BEFORE browser paints ──
+     On first segment: content appears immediately (no fade-in animation).
+     On subsequent segments: content was already faded out before setSegIdx
+     was called, so here we just animate it back in. */
+  useLayoutEffect(()=>{
     if(!started) return;
     const el=textRef.current;
     if(!el) return;
-    el.style.transition="none";
-    el.style.opacity="0";
-    el.style.transform="translateY(10px)";
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      el.style.transition="opacity .6s ease, transform .6s ease";
+    if(firstSeg.current){
+      /* First time showing player — just make visible immediately */
+      firstSeg.current=false;
+      el.style.transition="none";
       el.style.opacity="1";
       el.style.transform="translateY(0)";
-    }));
+    } else {
+      /* Segment changed — was faded out before setSegIdx, now fade back in */
+      el.style.transition="none";
+      el.style.opacity="0";
+      el.style.transform="translateY(10px)";
+      requestAnimationFrame(()=>{
+        el.style.transition="opacity .7s ease, transform .7s ease";
+        el.style.opacity="1";
+        el.style.transform="translateY(0)";
+      });
+    }
+    /* Speak the text aloud for eyes-closed users */
+    speak(med.segs[segIdx].text);
   },[segIdx,started]);
 
-  /* Auto-advance timer */
+  /* ── Auto-advance timer ── */
   useEffect(()=>{
     if(!started||done) return;
     clearTimeout(timerRef.current);
@@ -541,72 +638,130 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
     const seg=med.segs[segIdx];
     timerRef.current=setTimeout(()=>{
       if(pausedRef.current) return;
-      if(segIdx>=med.segs.length-1){setDone(true);}
-      else{
-        const el=textRef.current;
-        if(el){el.style.transition="opacity .35s ease";el.style.opacity="0";}
-        setTimeout(()=>setSegIdx(i=>i+1),370);
+      const el=textRef.current;
+      if(segIdx>=med.segs.length-1){
+        if(el){el.style.transition="opacity .5s ease";el.style.opacity="0";}
+        setTimeout(()=>setDone(true),520);
+      } else {
+        if(el){el.style.transition="opacity .4s ease";el.style.opacity="0";}
+        setTimeout(()=>setSegIdx(i=>i+1),450);
       }
     },seg.s*1000);
     return()=>clearTimeout(timerRef.current);
   },[segIdx,started,done]);
 
+  /* Toggle voice */
+  const toggleVoice=()=>{
+    try{ window.speechSynthesis.cancel(); }catch(e){}
+    setVoiceOn(v=>!v);
+  };
+
   const togglePause=()=>{
     pausedRef.current=!pausedRef.current;
     setPaused(p=>!p);
-    if(!pausedRef.current){
-      // Resume — restart timer
-      const seg=med.segs[segIdx];
+    if(pausedRef.current){
+      try{ window.speechSynthesis.cancel(); }catch(e){}
+    } else {
+      /* Resume: re-speak current segment then restart timer */
+      speak(med.segs[segIdx].text);
+      const el=textRef.current;
       clearTimeout(timerRef.current);
       timerRef.current=setTimeout(()=>{
         if(segIdx>=med.segs.length-1){setDone(true);}
-        else{const el=textRef.current;if(el){el.style.transition="opacity .35s ease";el.style.opacity="0";}setTimeout(()=>setSegIdx(i=>i+1),370);}
-      },seg.s*1000);
+        else{
+          if(el){el.style.transition="opacity .4s ease";el.style.opacity="0";}
+          setTimeout(()=>setSegIdx(i=>i+1),450);
+        }
+      },med.segs[segIdx].s*1000);
     }
   };
 
   const advanceSeg=()=>{
     clearTimeout(timerRef.current);
-    if(segIdx>=med.segs.length-1){setDone(true);return;}
+    try{ window.speechSynthesis.cancel(); }catch(e){}
     const el=textRef.current;
-    if(el){el.style.transition="opacity .25s ease";el.style.opacity="0";}
-    setTimeout(()=>setSegIdx(i=>i+1),270);
+    if(segIdx>=med.segs.length-1){
+      if(el){el.style.transition="opacity .4s ease";el.style.opacity="0";}
+      setTimeout(()=>setDone(true),450);
+      return;
+    }
+    if(el){el.style.transition="opacity .3s ease";el.style.opacity="0";}
+    setTimeout(()=>setSegIdx(i=>i+1),340);
   };
 
-  const NB="#0D0E1A";
+  /* ── Cleanup speech on unmount ── */
+  useEffect(()=>{
+    return()=>{ try{ window.speechSynthesis.cancel(); }catch(e){} };
+  },[]);
+
   const prog=((segIdx+1)/med.segs.length)*100;
 
+  /* ── DONE screen ── */
   if(done) return(
-    <div style={{position:"fixed",inset:0,zIndex:500,background:NB,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"48px 32px",animation:"riseIn .7s ease"}}>
-      <div style={{width:"76px",height:"76px",borderRadius:"50%",border:"1.5px solid #8FAFA8",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 32px",animation:"float 3s ease infinite"}}>
+    <div style={{position:"fixed",inset:0,zIndex:500,background:NB,
+      display:"flex",flexDirection:"column",alignItems:"center",
+      justifyContent:"center",textAlign:"center",padding:"48px 32px",
+      animation:"riseIn .7s ease"}}>
+      <div style={{width:"76px",height:"76px",borderRadius:"50%",
+        border:"1.5px solid #8FAFA8",display:"flex",alignItems:"center",
+        justifyContent:"center",margin:"0 auto 32px",animation:"float 3s ease infinite"}}>
         <span style={{fontSize:"30px",color:"#8FAFA8"}}>✓</span>
       </div>
-      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,color:"#E8E2D8",marginBottom:"16px"}}>Complete.</h2>
-      <p style={{fontSize:"17px",color:"#545470",lineHeight:1.78,maxWidth:"280px",margin:"0 auto 48px"}}>
-        Carry this stillness with you.
-      </p>
+      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",
+        fontWeight:300,color:"#E8E2D8",marginBottom:"16px"}}>Complete.</h2>
+      <p style={{fontSize:"17px",color:"#545470",lineHeight:1.78,
+        maxWidth:"280px",margin:"0 auto 48px"}}>Carry this stillness with you.</p>
       <button onClick={()=>{sStop();onClose();}}
-        style={{background:"#526D6A",color:"#fff",border:"none",padding:"20px 48px",borderRadius:"100px",fontSize:"16px",fontWeight:500}}>
+        style={{background:"#526D6A",color:"#fff",border:"none",
+          padding:"20px 48px",borderRadius:"100px",fontSize:"16px",fontWeight:500}}>
         Return Home
       </button>
     </div>
   );
 
-  /* Intro screen */
+  /* ── INTRO screen ── */
   if(!started) return(
     <div style={{position:"fixed",inset:0,zIndex:500,overflow:"hidden"}}>
-      <NatureCard src={med.img} grad={med.grad} style={{width:"100%",height:"100%",borderRadius:0}}>
-        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"52px 28px 52px"}}>
-          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:"100px",padding:"8px 18px",fontSize:"13px",color:"rgba(255,255,255,.8)",alignSelf:"flex-start",backdropFilter:"blur(8px)"}}>← Back</button>
+      <NatureCard src={med.img} grad={med.grad}
+        style={{width:"100%",height:"100%",borderRadius:0}}>
+        <div style={{height:"100vh",display:"flex",flexDirection:"column",
+          justifyContent:"space-between",padding:"52px 28px 56px"}}>
+          <button onClick={onClose}
+            style={{background:"rgba(255,255,255,.12)",border:"none",
+              borderRadius:"100px",padding:"8px 18px",fontSize:"13px",
+              color:"rgba(255,255,255,.8)",alignSelf:"flex-start",
+              backdropFilter:"blur(8px)"}}>← Back</button>
           <div>
-            <p style={{fontSize:"11px",letterSpacing:".35em",color:"rgba(255,255,255,.6)",marginBottom:"12px",fontWeight:500}}>{med.badge.toUpperCase()} · {med.duration}</p>
-            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,lineHeight:1.18,color:"#fff",marginBottom:"14px"}}>{med.title}</h1>
-            <p style={{fontSize:"17px",color:"rgba(255,255,255,.72)",lineHeight:1.65,marginBottom:"40px"}}>{med.tagline}</p>
-            <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"36px"}}>
-              <span style={{fontSize:"15px",color:"rgba(255,255,255,.55)"}}>{med.sound==="rain"?"🌧 Rain":med.sound==="ocean"?"🌊 Ocean":"🌿 Forest"} will play during this session</span>
+            <p style={{fontSize:"11px",letterSpacing:".35em",
+              color:"rgba(255,255,255,.6)",marginBottom:"12px",fontWeight:500}}>
+              {med.badge.toUpperCase()} · {med.duration}
+            </p>
+            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",
+              fontWeight:300,lineHeight:1.18,color:"#fff",marginBottom:"14px"}}>
+              {med.title}
+            </h1>
+            <p style={{fontSize:"17px",color:"rgba(255,255,255,.72)",
+              lineHeight:1.65,marginBottom:"32px"}}>{med.tagline}</p>
+            <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"14px"}}>
+              <span style={{fontSize:"14px",color:"rgba(255,255,255,.5)"}}>
+                {med.sound==="rain"?"🌧 Rain plays during this session":
+                 med.sound==="ocean"?"🌊 Ocean plays during this session":
+                 "🌿 Forest plays during this session"}
+              </span>
+            </div>
+            {/* Voice note */}
+            <div style={{background:"rgba(255,255,255,.08)",borderRadius:"12px",
+              padding:"12px 16px",marginBottom:"28px",
+              border:"1px solid rgba(255,255,255,.12)"}}>
+              <p style={{fontSize:"13px",color:"rgba(255,255,255,.6)",lineHeight:1.6}}>
+                🎙 Voice guidance is on — you can close your eyes and just listen.
+              </p>
             </div>
             <button onClick={begin}
-              style={{background:"rgba(255,255,255,.15)",backdropFilter:"blur(12px)",border:"1.5px solid rgba(255,255,255,.35)",color:"#fff",padding:"20px 40px",borderRadius:"100px",fontSize:"17px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>
+              style={{background:"rgba(255,255,255,.15)",backdropFilter:"blur(12px)",
+                border:"1.5px solid rgba(255,255,255,.35)",color:"#fff",
+                padding:"20px 40px",borderRadius:"100px",fontSize:"17px",
+                fontWeight:500,width:"100%",letterSpacing:".02em"}}>
               Begin Meditation
             </button>
           </div>
@@ -615,47 +770,90 @@ function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundO
     </div>
   );
 
-  /* Active player */
+  /* ── ACTIVE PLAYER ── */
   const seg=med.segs[segIdx];
   return(
     <div style={{position:"fixed",inset:0,zIndex:500,overflow:"hidden"}}>
-      <NatureCard src={med.img} grad="rgba(5,5,18,.88)" style={{width:"100%",height:"100%",borderRadius:0}}>
-        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",padding:"44px 28px 52px"}}>
-          {/* Top bar */}
-          <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"28px"}}>
-            <button onClick={()=>{clearTimeout(timerRef.current);sStop();onClose();}}
-              style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:"100px",padding:"8px 16px",fontSize:"13px",color:"rgba(255,255,255,.7)"}}>✕</button>
-            <div style={{flex:1,height:"2px",background:"rgba(255,255,255,.12)",borderRadius:"1px"}}>
-              <div style={{height:"100%",width:`${prog}%`,background:"rgba(143,175,168,.75)",borderRadius:"1px",transition:"width 1s ease"}}/>
+      <NatureCard src={med.img} grad="rgba(5,5,18,.9)"
+        style={{width:"100%",height:"100%",borderRadius:0}}>
+        <div style={{height:"100vh",display:"flex",flexDirection:"column",
+          padding:"44px 28px 48px"}}>
+
+          {/* Top bar — close · progress · pause · voice */}
+          <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"24px"}}>
+            <button onClick={()=>{clearTimeout(timerRef.current);
+              try{window.speechSynthesis.cancel();}catch(e){}
+              sStop();onClose();}}
+              style={{background:"rgba(255,255,255,.1)",border:"none",
+                borderRadius:"100px",padding:"8px 14px",fontSize:"13px",
+                color:"rgba(255,255,255,.7)",flexShrink:0}}>✕</button>
+
+            {/* Segment progress bar */}
+            <div style={{flex:1,height:"2px",background:"rgba(255,255,255,.1)",
+              borderRadius:"1px"}}>
+              <div style={{height:"100%",width:`${prog}%`,
+                background:"rgba(143,175,168,.7)",borderRadius:"1px",
+                transition:"width 1s ease"}}/>
             </div>
+
+            {/* Voice toggle */}
+            <button onClick={toggleVoice}
+              style={{background:voiceOn?"rgba(82,109,106,.4)":"rgba(255,255,255,.08)",
+                border:`1px solid ${voiceOn?"rgba(143,175,168,.5)":"rgba(255,255,255,.15)"}`,
+                borderRadius:"100px",padding:"8px 12px",fontSize:"14px",
+                color:voiceOn?"#8FAFA8":"rgba(255,255,255,.5)",flexShrink:0,
+                transition:"all .25s"}}>
+              {voiceOn?"🔊":"🔇"}
+            </button>
+
+            {/* Pause toggle */}
             <button onClick={togglePause}
-              style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:"100px",padding:"8px 16px",fontSize:"13px",color:"rgba(255,255,255,.7)"}}>
+              style={{background:"rgba(255,255,255,.08)",border:"none",
+                borderRadius:"100px",padding:"8px 14px",fontSize:"13px",
+                color:"rgba(255,255,255,.7)",flexShrink:0}}>
               {paused?"▷":"‖"}
             </button>
           </div>
 
-          {/* Subtle background orb */}
-          <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",
-            width:"300px",height:"300px",borderRadius:"50%",
-            background:"radial-gradient(circle, rgba(82,109,106,.12), transparent)",
+          {/* Background orb */}
+          <div style={{position:"absolute",top:"50%",left:"50%",
+            transform:"translate(-50%,-50%)",width:"280px",height:"280px",
+            borderRadius:"50%",
+            background:"radial-gradient(circle, rgba(82,109,106,.1), transparent)",
             animation:"orbIn 8s ease-in-out infinite",pointerEvents:"none"}}/>
 
-          {/* Meditation text — center stage */}
-          <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}}>
-            <div ref={textRef} style={{maxWidth:"340px",opacity:0}}>
-              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"28px",fontWeight:300,lineHeight:1.72,color:"rgba(255,255,255,.92)",whiteSpace:"pre-line"}}>
+          {/* Segment counter */}
+          <p style={{textAlign:"center",fontSize:"11px",
+            color:"rgba(255,255,255,.25)",letterSpacing:".1em",marginBottom:"8px"}}>
+            {segIdx+1} / {med.segs.length}
+          </p>
+
+          {/* TEXT — no opacity:0 in JSX. Opacity controlled by useLayoutEffect only. */}
+          <div style={{flex:1,display:"flex",flexDirection:"column",
+            alignItems:"center",justifyContent:"center",textAlign:"center"}}>
+            <div ref={textRef} style={{maxWidth:"340px"}}>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"28px",
+                fontWeight:300,lineHeight:1.75,color:"rgba(255,255,255,.92)",
+                whiteSpace:"pre-line"}}>
                 {seg.text}
               </p>
             </div>
           </div>
 
-          {/* Tap to advance */}
+          {/* Eyes-closed hint + advance button */}
           <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"12px"}}>
-            <p style={{fontSize:"12px",color:"rgba(255,255,255,.35)",letterSpacing:".08em"}}>
-              {paused?"PAUSED":"TAP TO CONTINUE"}
+            <p style={{fontSize:"11px",color:"rgba(255,255,255,.28)",letterSpacing:".06em",textAlign:"center"}}>
+              {paused
+                ? "PAUSED"
+                : voiceOn
+                  ? "EYES CLOSED · JUST LISTEN · AUTO-ADVANCING"
+                  : "AUTO-ADVANCING · TAP NEXT TO SKIP"}
             </p>
             <button onClick={advanceSeg}
-              style={{background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.2)",borderRadius:"100px",padding:"14px 36px",fontSize:"15px",color:"rgba(255,255,255,.8)"}}>
+              style={{background:"rgba(255,255,255,.08)",
+                border:"1px solid rgba(255,255,255,.18)",
+                borderRadius:"100px",padding:"13px 32px",
+                fontSize:"14px",color:"rgba(255,255,255,.7)"}}>
               {segIdx>=med.segs.length-1?"Complete →":"Next →"}
             </button>
           </div>
@@ -683,7 +881,7 @@ function NightReset({c,onDone,trans,setTrans}){
     setTimeout(()=>setStep(s=>s+1),260);
   },[]);
 
-  useEffect(()=>{
+  useLayoutEffect(()=>{
     const el=contentRef.current;
     if(!el) return;
     if(!nightMounted.current){
@@ -691,15 +889,13 @@ function NightReset({c,onDone,trans,setTrans}){
       nightMounted.current=true;
       el.style.opacity="1";
     } else {
-      /* After step change: nightNext() set opacity→0 via ref before setStep().
-         React re-rendered new content. Since opacity is NOT in JSX,
-         React did NOT reset it — it stayed at 0. Now fade new content in. */
+      /* Lock opacity to 0 BEFORE browser paints the new step content. */
       el.style.transition="none";
       el.style.opacity="0";
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
         el.style.transition="opacity .38s ease";
         el.style.opacity="1";
-      }));
+      });
     }
     clearTimeout(autoRef.current);
     const last=step>=NIGHT_STEPS.length-1;
