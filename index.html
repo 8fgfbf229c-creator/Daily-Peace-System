@@ -2,17 +2,35 @@
 <html lang="en">
 <head>
   <meta name="robots" content="noindex, nofollow">
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Reset – Your Daily Peace System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Reset – Your Daily Peace System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
-html,body{width:100%;min-height:100%}
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-font-smoothing:antialiased;
+  /* Hardware Acceleration to stop flickering */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+html,body {
+  width:100%;
+  min-height:100%;
+  /* Dark background to prevent white flashes */
+  background-color: #0A0F0D; 
+}
+
 #root{min-height:100vh}
 button,textarea{font-family:'DM Sans',sans-serif;outline:none;border:none;cursor:pointer}
 textarea{resize:none}
@@ -45,15 +63,15 @@ const {useState,useEffect,useRef,useCallback}=React;
 
 /* ═══════════════════════════ DATA ═══════════════════════════ */
 const GRATITUDE=[
-  {title:"The Gift of Today",      text:"Thank you, God, for another morning. Not everyone woke up today — I did. That alone is something I did not earn.",                  prompt:"What's one small thing today that usually goes unnoticed?"},
-  {title:"The People Around You",  text:"Thank you for the people in my life who show up in quiet ways — not always with words, but with presence.",                         prompt:"Who made your life a little easier this week?"},
+  {title:"The Gift of Today",      text:"Thank you, God, for another morning. Not everyone woke up today — I did. That alone is something I did not earn.",                 prompt:"What's one small thing today that usually goes unnoticed?"},
+  {title:"The People Around You",  text:"Thank you for the people in my life who show up in quiet ways — not always with words, but with presence.",                        prompt:"Who made your life a little easier this week?"},
   {title:"Your Body Carried You",  text:"Thank you for a body that breathes without me asking. For a heart that kept going through every hard season.",                      prompt:"What has your body handled lately that deserves a thank you?"},
-  {title:"The Hard Days",          text:"Thank you even for the hard days. They proved I was stronger than I believed. I made it through every single one.",                  prompt:"Which difficult moment this year taught you something real?"},
+  {title:"The Hard Days",          text:"Thank you even for the hard days. They proved I was stronger than I believed. I made it through every single one.",                 prompt:"Which difficult moment this year taught you something real?"},
   {title:"Clean Water & Shelter",  text:"Thank you for clean water. For shelter from the storm. For ordinary comforts I walk past without truly seeing.",                    prompt:"Name one comfort you've been taking for granted."},
   {title:"This Breath",            text:"Right now, I am breathing. That means I am alive. That means there is still time — for healing, for love, for becoming.",           prompt:"If you had more time, what would you do more of?"},
-  {title:"The Learning",           text:"Thank you for every mistake that taught me something. For every loss that showed me what truly mattered.",                           prompt:"What do you know now that you didn't know a year ago?"},
+  {title:"The Learning",           text:"Thank you for every mistake that taught me something. For every loss that showed me what truly mattered.",                         prompt:"What do you know now that you didn't know a year ago?"},
   {title:"Sunlight",               text:"Thank you for the light that finds its way in — through windows, through people, through unexpected moments of beauty.",             prompt:"What small moment of beauty did you witness today?"},
-  {title:"Second Chances",         text:"Thank you for every new day — a fresh page. Not a reminder of what I failed, but a chance to begin again.",                         prompt:"What would you do differently if today were a second chance?"},
+  {title:"Second Chances",         text:"Thank you for every new day — a fresh page. Not a reminder of what I failed, but a chance to begin again.",                        prompt:"What would you do differently if today were a second chance?"},
   {title:"Rest",                   text:"Thank you for sleep. For the quiet that holds us between one day and the next. For rest that asks nothing of us.",                   prompt:"When did you last truly rest — mind and body both?"},
   {title:"Kindness",               text:"Thank you for every act of kindness I've received — the ones I remember and the ones I've forgotten. They all landed.",              prompt:"Who was unexpectedly kind to you recently?"},
   {title:"Music",                  text:"Thank you for music. For a song that arrived at exactly the right moment. For the feeling of being understood by a stranger's melody.", prompt:"What song has meant the most to you lately?"},
@@ -64,7 +82,7 @@ const GRATITUDE=[
   {title:"The Small Joys",         text:"Thank you for the small joys I almost missed — a warm cup, a good laugh, the feeling of sheets on tired skin.",                    prompt:"Name three small things that brought you quiet joy this week."},
   {title:"My Mind",                text:"Thank you for a mind that questions, wonders, and seeks. Even when it worries too much, it shows it cares.",                        prompt:"What is your mind most curious about right now?"},
   {title:"Healing",                text:"Thank you for healing — physical, emotional, invisible. For the wounds that are slowly closing, even when I can't see them.",        prompt:"What part of you is healing right now, even if slowly?"},
-  {title:"Seasons That Change",    text:"Thank you that seasons change. That nothing stays the same forever — not the hard parts, not the waiting.",                          prompt:"What season of life are you in right now?"},
+  {title:"Seasons That Change",    text:"Thank you that seasons change. That nothing stays the same forever — not the hard parts, not the waiting.",                         prompt:"What season of life are you in right now?"},
   {title:"Laughter",               text:"Thank you for real laughter. The kind that catches you off guard. The kind that reminds you everything is not heavy.",              prompt:"When did you last laugh without holding back?"},
   {title:"Hope",                   text:"Thank you for hope. For the small voice that says things can be different. For the part of me that keeps getting up.",              prompt:"What are you quietly hoping for right now?"},
   {title:"Connection",             text:"Thank you for the connections that sustain me — family, friends, strangers who became more. For every relationship that held.",      prompt:"Who is one person you want to reach out to today?"},
@@ -75,7 +93,7 @@ const GRATITUDE=[
   {title:"Memories",               text:"Thank you for memories that still make me smile. For the ones that remind me: I have been happy before. I will be again.",          prompt:"What's a memory that still warms you when you visit it?"},
   {title:"Peace",                  text:"Thank you for every moment of genuine peace I have felt. For the proof that it exists. For the certainty it returns.",              prompt:"Where do you feel most at peace?"},
   {title:"This Moment",            text:"Thank you for now. For this exact moment — however ordinary or hard — because I am here in it, and that is everything.",             prompt:"If this moment was enough, what would that change?"},
-  {title:"The Journey",            text:"Thank you for the journey — not the destination, but the path. Every step shaped something in me.",                                 prompt:"What step have you taken recently that you're proud of?"},
+  {title:"The Journey",            text:"Thank you for the journey — not the destination, but the path. Every step shaped something in me.",                                  prompt:"What step have you taken recently that you're proud of?"},
 ];
 
 const AFFIRMATIONS=[
@@ -229,16 +247,16 @@ const MEDITATIONS=[
 
 const EMOTIONS=[
   {id:"overwhelmed",label:"Overwhelmed",  sub:"Too much at once"},
-  {id:"stressed",   label:"Stressed",     sub:"Tension, pressure building"},
+  {id:"stressed",   label:"Stressed",      sub:"Tension, pressure building"},
   {id:"tired",      label:"Mentally Tired",sub:"Drained, foggy, flat"},
-  {id:"calm",       label:"Calm",         sub:"Just checking in"},
+  {id:"calm",       label:"Calm",          sub:"Just checking in"},
 ];
 
 const RESP={
   overwhelmed:{msg:"You don't have to solve everything right now.",sub:"One breath. One step. That's all this moment needs.",btn:"Start 5-Step Reset",next:"reset5"},
-  stressed:   {msg:"Stress means you care about something.",       sub:"Let's give that energy somewhere to land.",          btn:"Start 5-Step Reset",next:"reset5"},
-  tired:      {msg:"Your mind has worked hard today.",             sub:"You have permission to rest. Right now.",            btn:"Start Gentle Reset",next:"reset5"},
-  calm:       {msg:"Good. Let's protect and deepen that.",         sub:"A moment of calm is worth honoring.",               btn:"Open Today's Gratitude",next:"gratitude"},
+  stressed:   {msg:"Stress means you care about something.",       sub:"Let's give that energy somewhere to land.",            btn:"Start 5-Step Reset",next:"reset5"},
+  tired:      {msg:"Your mind has worked hard today.",              sub:"You have permission to rest. Right now.",            btn:"Start Gentle Reset",next:"reset5"},
+  calm:       {msg:"Good. Let's protect and deepen that.",         sub:"A moment of calm is worth honoring.",                btn:"Open Today's Gratitude",next:"gratitude"},
 };
 
 /* ═══════════════ SOUND ENGINE ═══════════════ */
@@ -372,11 +390,11 @@ function NightBreath(){
 
 /* ═══════════════ CRISIS MODAL ═══════════════ */
 const CRISIS_DATA=[
-  {t:"Stop.",        b:"Whatever is happening — stop. Don't try to fix it right now. Just stop moving for one moment."},
-  {t:"Breathe.",     b:"Put your hand on your chest. Feel it rise. Breathe in through your nose... slowly out through your mouth. Again."},
-  {t:"Name it.",     b:"What are you feeling right now? Say it out loud or in your mind.\n\n\"I feel ___.\" Naming it is the first step to moving through it."},
-  {t:"You are safe.",b:"This feeling is not permanent. You have felt this before and come through it. You are stronger than this moment."},
-  {t:"One step.",    b:"You don't need to fix everything. Just one tiny thing: drink water, step outside, text someone.\n\nOne step is enough."},
+  {t:"Stop.",         b:"Whatever is happening — stop. Don't try to fix it right now. Just stop moving for one moment."},
+  {t:"Breathe.",      b:"Put your hand on your chest. Feel it rise. Breathe in through your nose... slowly out through your mouth. Again."},
+  {t:"Name it.",      b:"What are you feeling right now? Say it out loud or in your mind.\n\n\"I feel ___.\" Naming it is the first step to moving through it."},
+  {t:"You are safe.", b:"This feeling is not permanent. You have felt this before and come through it. You are stronger than this moment."},
+  {t:"One step.",     b:"You don't need to fix everything. Just one tiny thing: drink water, step outside, text someone.\n\nOne step is enough."},
 ];
 function CrisisModal({c,onClose}){
   const [step,setStep]=useState(0);
@@ -390,737 +408,312 @@ function CrisisModal({c,onClose}){
         <button onClick={onClose} style={{background:"transparent",border:"none",fontSize:"26px",color:c.muted,lineHeight:1,padding:"0 6px"}}>×</button>
       </div>
       <div style={{display:"flex",gap:"7px",marginBottom:"36px"}}>
-        {CRISIS_DATA.map((_,i)=><div key={i} style={{flex:1,height:"3px",borderRadius:"2px",background:i<=step?c.green:c.border,transition:"background .4s"}}/>)}
+        {CRISIS_DATA.map((_,i)=>(
+          <div key={i} style={{flex:1,height:"3px",borderRadius:"2px",background:i<=step?c.green:c.border,transition:"all .4s"}}/>
+        ))}
       </div>
-      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,marginBottom:"18px",color:c.text}}>{cs.t}</h2>
-      <p style={{fontSize:"17px",lineHeight:1.82,color:c.muted,marginBottom:"40px",whiteSpace:"pre-line"}}>{cs.b}</p>
-      <button onClick={()=>{if(step<CRISIS_DATA.length-1)setStep(s=>s+1);else onClose();}}
-        style={{background:c.green,color:"#fff",border:"none",padding:"20px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>
-        {step<CRISIS_DATA.length-1?"I'm with you →":"I'm okay now"}
+      <div style={{minHeight:"180px",animation:"fadeIn .4s ease"}}>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",color:c.text,fontWeight:300,marginBottom:"16px"}}>{cs.t}</h2>
+        <p style={{fontSize:"17px",color:c.muted,lineHeight:1.6,whiteSpace:"pre-wrap"}}>{cs.b}</p>
+      </div>
+      <button onClick={()=>{if(step<CRISIS_DATA.length-1)setStep(step+1);else onClose();}}
+        style={{width:"100%",height:"60px",borderRadius:"18px",background:c.green,color:c.surface,fontSize:"16px",fontWeight:500,marginTop:"32px"}}>
+        {step<CRISIS_DATA.length-1?"Next Step":"I'm Breathing Now"}
       </button>
     </div>
   </div>);
 }
 
-/* ═════════════════════════════════════════════════════════════
-   5-STEP CALM FLOW — BLINK-FREE via direct DOM ref transitions
-═════════════════════════════════════════════════════════════ */
-function CalmFlow({c,onDone}){
-  const [idx,setIdx]=useState(0);
-  const contentRef=useRef(null);
-  const calmMounted=useRef(false);
-  const aff=AFFIRMATIONS[(new Date().getDate()-1)%AFFIRMATIONS.length];
-
-  /* When idx changes, React updates DOM content, then we fade back in.
-     KEY: opacity is NOT in the JSX style below, so React never resets it.
-     Whatever opacity we set via ref persists through re-renders. */
-  useEffect(()=>{
-    const el=contentRef.current;
-    if(!el) return;
-    if(!calmMounted.current){
-      /* First mount — content should be immediately visible, no animation. */
-      calmMounted.current=true;
-      el.style.opacity="1";
-      el.style.transform="translateX(0)";
-      return;
-    }
-    /* Subsequent step changes:
-       goNext() already set opacity→0 via ref before setIdx().
-       React re-rendered new content. Since opacity is NOT in JSX,
-       React did NOT reset it — it stayed at 0. Now fade the new content in. */
-    el.style.transition="none";
-    el.style.opacity="0";
-    el.style.transform="translateX(8px)";
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      el.style.transition="opacity .32s ease, transform .32s ease";
-      el.style.opacity="1";
-      el.style.transform="translateX(0)";
-    }));
-  },[idx]);
-
-  const goNext=()=>{
-    const el=contentRef.current;
-    if(!el) return;
-    el.style.transition="opacity .22s ease, transform .22s ease";
-    el.style.opacity="0";
-    el.style.transform="translateX(-8px)";
-    setTimeout(()=>{
-      if(idx>=CALM_STEPS.length-1){onDone();return;}
-      setIdx(i=>i+1);
-    },240);
-  };
-
-  const step=CALM_STEPS[idx];
-  const prog=((idx+1)/CALM_STEPS.length)*100;
-
-  return(<div style={{background:c.bg,minHeight:"100vh",display:"flex",flexDirection:"column",padding:"44px 28px 36px",fontFamily:"'DM Sans',sans-serif"}}>
-    {/* Progress bar */}
-    <div style={{height:"2px",background:c.border,borderRadius:"1px",marginBottom:"24px"}}>
-      <div style={{height:"100%",width:`${prog}%`,background:c.green,borderRadius:"1px",transition:"width 1s ease"}}/>
-    </div>
-    {/* Step dots */}
-    <div style={{display:"flex",gap:"6px",marginBottom:"32px"}}>
-      {CALM_STEPS.map((_,i)=><div key={i} style={{flex:1,height:"3px",borderRadius:"2px",background:i<=idx?c.green:c.border,transition:"background .5s"}}/>)}
-    </div>
-    {/* Content — controlled by ref, never re-mounts */}
-    <div ref={contentRef} style={{flex:1,display:"flex",flexDirection:"column"}}>
-      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"10px",fontWeight:500}}>
-        STEP {idx+1} OF {CALM_STEPS.length}
-      </p>
-      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"6px",color:c.text,lineHeight:1.22}}>
-        {step.title}
-      </h2>
-      <p style={{fontSize:"14px",color:c.muted,marginBottom:"24px"}}>{step.sub}</p>
-
-      {step.type==="breath" && <BreathOrb c={c}/>}
-
-      {step.type==="affirm" && (
-        <div style={{background:c.surface2,borderRadius:"20px",padding:"28px",flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
-          <p style={{fontSize:"11px",letterSpacing:".2em",color:c.green,marginBottom:"16px",fontWeight:500}}>YOUR AFFIRMATION FOR TODAY</p>
-          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"26px",fontWeight:300,lineHeight:1.65,fontStyle:"italic",color:c.text}}>"{aff}"</p>
-          <p style={{fontSize:"14px",color:c.muted,marginTop:"20px",lineHeight:1.6}}>Read this slowly.\nRead it once more. Let it settle into you.</p>
-        </div>
-      )}
-
-      {(step.type==="body"||step.type==="ground"||step.type==="release")&&(
-        <div style={{background:c.surface2,borderRadius:"20px",padding:"24px",flex:1}}>
-          <p style={{fontSize:"16px",lineHeight:1.9,color:c.text,whiteSpace:"pre-line"}}>{step.text}</p>
-        </div>
-      )}
-    </div>
-
-    <button onClick={goNext}
-      style={{marginTop:"20px",background:c.green,color:"#fff",border:"none",
-        padding:"18px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",letterSpacing:".02em",transition:"opacity .2s"}}
-      onMouseEnter={e=>e.target.style.opacity=".88"} onMouseLeave={e=>e.target.style.opacity="1"}>
-      {idx<CALM_STEPS.length-1?"Continue →":"I feel calm ✓"}
-    </button>
-  </div>);
-}
-
-/* ═════════════════════════════════════════════════════════════
-   GUIDED MEDITATION PLAYER — blink-free segment transitions
-═════════════════════════════════════════════════════════════ */
-function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundOn}){
-  const [started,setStarted]=useState(false);
-  const [segIdx,setSegIdx]=useState(0);
-  const [done,setDone]=useState(false);
-  const [paused,setPaused]=useState(false);
-  const textRef=useRef(null);
-  const timerRef=useRef(null);
-  const pausedRef=useRef(false);
-
-  /* Start sound when meditation begins */
-  const begin=()=>{
-    setStarted(true);
-    sStart(med.sound);
-    setSoundOn(true);
-    setSound(med.sound);
-  };
-
-  /* When segment index changes, animate the text */
-  useEffect(()=>{
-    if(!started) return;
-    const el=textRef.current;
-    if(!el) return;
-    el.style.transition="none";
-    el.style.opacity="0";
-    el.style.transform="translateY(10px)";
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      el.style.transition="opacity .6s ease, transform .6s ease";
-      el.style.opacity="1";
-      el.style.transform="translateY(0)";
-    }));
-  },[segIdx,started]);
-
-  /* Auto-advance timer */
-  useEffect(()=>{
-    if(!started||done) return;
-    clearTimeout(timerRef.current);
-    if(pausedRef.current) return;
-    const seg=med.segs[segIdx];
-    timerRef.current=setTimeout(()=>{
-      if(pausedRef.current) return;
-      if(segIdx>=med.segs.length-1){setDone(true);}
-      else{
-        const el=textRef.current;
-        if(el){el.style.transition="opacity .35s ease";el.style.opacity="0";}
-        setTimeout(()=>setSegIdx(i=>i+1),370);
-      }
-    },seg.s*1000);
-    return()=>clearTimeout(timerRef.current);
-  },[segIdx,started,done]);
-
-  const togglePause=()=>{
-    pausedRef.current=!pausedRef.current;
-    setPaused(p=>!p);
-    if(!pausedRef.current){
-      // Resume — restart timer
-      const seg=med.segs[segIdx];
-      clearTimeout(timerRef.current);
-      timerRef.current=setTimeout(()=>{
-        if(segIdx>=med.segs.length-1){setDone(true);}
-        else{const el=textRef.current;if(el){el.style.transition="opacity .35s ease";el.style.opacity="0";}setTimeout(()=>setSegIdx(i=>i+1),370);}
-      },seg.s*1000);
-    }
-  };
-
-  const advanceSeg=()=>{
-    clearTimeout(timerRef.current);
-    if(segIdx>=med.segs.length-1){setDone(true);return;}
-    const el=textRef.current;
-    if(el){el.style.transition="opacity .25s ease";el.style.opacity="0";}
-    setTimeout(()=>setSegIdx(i=>i+1),270);
-  };
-
-  const NB="#0D0E1A";
-  const prog=((segIdx+1)/med.segs.length)*100;
-
-  if(done) return(
-    <div style={{position:"fixed",inset:0,zIndex:500,background:NB,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"48px 32px",animation:"riseIn .7s ease"}}>
-      <div style={{width:"76px",height:"76px",borderRadius:"50%",border:"1.5px solid #8FAFA8",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 32px",animation:"float 3s ease infinite"}}>
-        <span style={{fontSize:"30px",color:"#8FAFA8"}}>✓</span>
-      </div>
-      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,color:"#E8E2D8",marginBottom:"16px"}}>Complete.</h2>
-      <p style={{fontSize:"17px",color:"#545470",lineHeight:1.78,maxWidth:"280px",margin:"0 auto 48px"}}>
-        Carry this stillness with you.
-      </p>
-      <button onClick={()=>{sStop();onClose();}}
-        style={{background:"#526D6A",color:"#fff",border:"none",padding:"20px 48px",borderRadius:"100px",fontSize:"16px",fontWeight:500}}>
-        Return Home
-      </button>
-    </div>
-  );
-
-  /* Intro screen */
-  if(!started) return(
-    <div style={{position:"fixed",inset:0,zIndex:500,overflow:"hidden"}}>
-      <NatureCard src={med.img} grad={med.grad} style={{width:"100%",height:"100%",borderRadius:0}}>
-        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"52px 28px 52px"}}>
-          <button onClick={onClose} style={{background:"rgba(255,255,255,.12)",border:"none",borderRadius:"100px",padding:"8px 18px",fontSize:"13px",color:"rgba(255,255,255,.8)",alignSelf:"flex-start",backdropFilter:"blur(8px)"}}>← Back</button>
-          <div>
-            <p style={{fontSize:"11px",letterSpacing:".35em",color:"rgba(255,255,255,.6)",marginBottom:"12px",fontWeight:500}}>{med.badge.toUpperCase()} · {med.duration}</p>
-            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,lineHeight:1.18,color:"#fff",marginBottom:"14px"}}>{med.title}</h1>
-            <p style={{fontSize:"17px",color:"rgba(255,255,255,.72)",lineHeight:1.65,marginBottom:"40px"}}>{med.tagline}</p>
-            <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"36px"}}>
-              <span style={{fontSize:"15px",color:"rgba(255,255,255,.55)"}}>{med.sound==="rain"?"🌧 Rain":med.sound==="ocean"?"🌊 Ocean":"🌿 Forest"} will play during this session</span>
-            </div>
-            <button onClick={begin}
-              style={{background:"rgba(255,255,255,.15)",backdropFilter:"blur(12px)",border:"1.5px solid rgba(255,255,255,.35)",color:"#fff",padding:"20px 40px",borderRadius:"100px",fontSize:"17px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>
-              Begin Meditation
-            </button>
-          </div>
-        </div>
-      </NatureCard>
-    </div>
-  );
-
-  /* Active player */
-  const seg=med.segs[segIdx];
-  return(
-    <div style={{position:"fixed",inset:0,zIndex:500,overflow:"hidden"}}>
-      <NatureCard src={med.img} grad="rgba(5,5,18,.88)" style={{width:"100%",height:"100%",borderRadius:0}}>
-        <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",padding:"44px 28px 52px"}}>
-          {/* Top bar */}
-          <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"28px"}}>
-            <button onClick={()=>{clearTimeout(timerRef.current);sStop();onClose();}}
-              style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:"100px",padding:"8px 16px",fontSize:"13px",color:"rgba(255,255,255,.7)"}}>✕</button>
-            <div style={{flex:1,height:"2px",background:"rgba(255,255,255,.12)",borderRadius:"1px"}}>
-              <div style={{height:"100%",width:`${prog}%`,background:"rgba(143,175,168,.75)",borderRadius:"1px",transition:"width 1s ease"}}/>
-            </div>
-            <button onClick={togglePause}
-              style={{background:"rgba(255,255,255,.1)",border:"none",borderRadius:"100px",padding:"8px 16px",fontSize:"13px",color:"rgba(255,255,255,.7)"}}>
-              {paused?"▷":"‖"}
-            </button>
-          </div>
-
-          {/* Subtle background orb */}
-          <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",
-            width:"300px",height:"300px",borderRadius:"50%",
-            background:"radial-gradient(circle, rgba(82,109,106,.12), transparent)",
-            animation:"orbIn 8s ease-in-out infinite",pointerEvents:"none"}}/>
-
-          {/* Meditation text — center stage */}
-          <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}}>
-            <div ref={textRef} style={{maxWidth:"340px",opacity:0}}>
-              <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"28px",fontWeight:300,lineHeight:1.72,color:"rgba(255,255,255,.92)",whiteSpace:"pre-line"}}>
-                {seg.text}
-              </p>
-            </div>
-          </div>
-
-          {/* Tap to advance */}
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"12px"}}>
-            <p style={{fontSize:"12px",color:"rgba(255,255,255,.35)",letterSpacing:".08em"}}>
-              {paused?"PAUSED":"TAP TO CONTINUE"}
-            </p>
-            <button onClick={advanceSeg}
-              style={{background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.2)",borderRadius:"100px",padding:"14px 36px",fontSize:"15px",color:"rgba(255,255,255,.8)"}}>
-              {segIdx>=med.segs.length-1?"Complete →":"Next →"}
-            </button>
-          </div>
-        </div>
-      </NatureCard>
-    </div>
-  );
-}
-
-/* ═════════════════════════════════════════════════════════════
-   NIGHT RESET — blink-free step transitions
-═════════════════════════════════════════════════════════════ */
-function NightReset({c,onDone,trans,setTrans}){
+/* ═══════════════════════════ APP COMPONENT ═══════════════════════════ */
+function App(){
+  const [view,setView]=useState('onboarding');
   const [step,setStep]=useState(0);
-  const contentRef=useRef(null);
-  const autoRef=useRef(null);
-  const nightMounted=useRef(false);
-  const NB=c.dark?"#0D0E15":"#181A28";
+  const [selectedEmotion,setSelectedEmotion]=useState(null);
+  const [showCrisis,setShowCrisis]=useState(false);
+  const [activeMed,setActiveMed]=useState(null);
+  const [medStep,setMedStep]=useState(0);
+  const [isPlaying,setIsPlaying]=useState(false);
+  const sound=useSoundEngine();
 
-  const nightNext=useCallback(()=>{
-    const el=contentRef.current;
-    if(!el) return;
-    el.style.transition="opacity .24s ease";
-    el.style.opacity="0";
-    setTimeout(()=>setStep(s=>s+1),260);
-  },[]);
-
-  useEffect(()=>{
-    const el=contentRef.current;
-    if(!el) return;
-    if(!nightMounted.current){
-      /* First mount — show content immediately, no animation needed. */
-      nightMounted.current=true;
-      el.style.opacity="1";
-    } else {
-      /* After step change: nightNext() set opacity→0 via ref before setStep().
-         React re-rendered new content. Since opacity is NOT in JSX,
-         React did NOT reset it — it stayed at 0. Now fade new content in. */
-      el.style.transition="none";
-      el.style.opacity="0";
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        el.style.transition="opacity .38s ease";
-        el.style.opacity="1";
-      }));
-    }
-    clearTimeout(autoRef.current);
-    const last=step>=NIGHT_STEPS.length-1;
-    autoRef.current=setTimeout(()=>{
-      if(last){onDone();}else nightNext();
-    },13000);
-    return()=>clearTimeout(autoRef.current);
-  },[step]);
-
-  const ns=NIGHT_STEPS[Math.min(step,NIGHT_STEPS.length-1)];
-  return(<div style={{fontFamily:"'DM Sans',sans-serif",background:NB,minHeight:"100vh",display:"flex",flexDirection:"column",padding:"52px 28px 60px",color:"#E8E2D8"}}>
-    <div style={{display:"flex",gap:"8px",marginBottom:"36px"}}>
-      {NIGHT_STEPS.map((_,i)=><div key={i} style={{flex:1,height:"2px",borderRadius:"1px",background:i<=step?"#8FAFA8":"#252638",transition:"background .6s"}}/>)}
-    </div>
-    <div style={{textAlign:"center",marginBottom:"32px"}}>
-      <div style={{fontSize:"36px",display:"inline-block",animation:"moonSway 6s ease-in-out infinite"}}>{ns.icon}</div>
-    </div>
-    <div ref={contentRef} style={{flex:1}}>
-      <p style={{fontSize:"11px",letterSpacing:".32em",color:"#8FAFA8",marginBottom:"14px",fontWeight:500}}>NIGHT RESET · {step+1} OF {NIGHT_STEPS.length}</p>
-      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"22px",lineHeight:1.22,color:"#E8E2D8"}}>{ns.title}</h2>
-      {ns.type==="nightBreath"
-        ?<NightBreath/>
-        :<div style={{background:"rgba(255,255,255,.04)",borderRadius:"18px",padding:"24px"}}>
-          <p style={{fontSize:"16px",lineHeight:1.88,color:"#5A5A7A",whiteSpace:"pre-line"}}>{ns.body}</p>
-        </div>
-      }
-    </div>
-    <button onClick={()=>{clearTimeout(autoRef.current);if(step<NIGHT_STEPS.length-1)nightNext();else onDone();}}
-      style={{marginTop:"24px",background:"#526D6A",color:"#fff",border:"none",borderRadius:"100px",padding:"20px 32px",fontSize:"15px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>
-      {step<NIGHT_STEPS.length-1?"Continue →":"Complete Night Reset →"}
-    </button>
-    {trans&&<Trans bg={NB}/>}
-  </div>);
-}
-
-/* ═════════════════════════════════════════════════════════════
-   JOURNAL
-═════════════════════════════════════════════════════════════ */
-const JKEY="reset_journal_v2";
-const JPROMPTS=["What happened today that I want to remember?","How did I feel today — really?","What am I grateful for right now, even if small?","What's one thing I'd tell myself tomorrow morning?"];
-function JournalTab({c}){
-  const today=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
-  const dk=new Date().toISOString().split("T")[0];
-  const [text,setText]=useState(()=>{try{return(JSON.parse(localStorage.getItem(JKEY)||"{}"))[dk]||"";}catch{return "";}});
-  const [saved,setSaved]=useState(false);const [pastOpen,setPastOpen]=useState(false);const [past,setPast]=useState([]);const [sp,setSp]=useState(0);
-  const save=()=>{try{const d=JSON.parse(localStorage.getItem(JKEY)||"{}");d[dk]=text;localStorage.setItem(JKEY,JSON.stringify(d));setSaved(true);setTimeout(()=>setSaved(false),2000);}catch(e){}};
-  const loadPast=()=>{try{const d=JSON.parse(localStorage.getItem(JKEY)||"{}");const e=Object.entries(d).filter(([k])=>k!==dk).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,7);setPast(e);}catch{}setPastOpen(true);};
-  return(<div style={{padding:"52px 28px 24px",animation:"riseIn .5s ease",fontFamily:"'DM Sans',sans-serif"}}>
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"8px"}}>
-      <div>
-        <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"8px",fontWeight:500}}>TODAY'S JOURNAL</p>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"30px",fontWeight:300,color:c.text}}>{today}</h1>
-      </div>
-      <button onClick={loadPast} style={{background:"transparent",border:`1px solid ${c.border}`,borderRadius:"100px",padding:"8px 16px",fontSize:"12px",color:c.muted,marginTop:"4px"}}>Past</button>
-    </div>
-    <div style={{display:"flex",gap:"7px",marginTop:"20px",marginBottom:"14px",overflowX:"auto",paddingBottom:"4px"}}>
-      {JPROMPTS.map((p,i)=>(
-        <button key={i} onClick={()=>setSp(i)} style={{flexShrink:0,padding:"8px 14px",borderRadius:"100px",fontSize:"12px",border:`1px solid ${sp===i?c.green:c.border}`,background:sp===i?`${c.green}15`:"transparent",color:sp===i?c.green:c.muted,transition:"all .2s",maxWidth:"190px",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{p.slice(0,24)}…</button>
-      ))}
-    </div>
-    <p style={{fontSize:"15px",color:c.text,lineHeight:1.65,marginBottom:"12px",fontStyle:"italic"}}>{JPROMPTS[sp]}</p>
-    <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Start writing... this is only for you."
-      style={{width:"100%",minHeight:"210px",background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px",fontSize:"16px",lineHeight:1.78,color:c.text,transition:"border-color .2s"}}
-      onFocus={e=>e.target.style.borderColor=c.green} onBlur={e=>e.target.style.borderColor=c.border}/>
-    <div style={{display:"flex",gap:"10px",marginTop:"12px"}}>
-      <button onClick={save} style={{flex:1,background:saved?"#3a6b68":c.green,color:"#fff",border:"none",padding:"16px",borderRadius:"100px",fontSize:"15px",fontWeight:500,transition:"background .3s"}}>{saved?"Saved ✓":"Save entry"}</button>
-      {text&&<button onClick={()=>setText("")} style={{background:"transparent",border:`1px solid ${c.border}`,borderRadius:"100px",padding:"16px 20px",fontSize:"14px",color:c.muted}}>Clear</button>}
-    </div>
-    <p style={{fontSize:"12px",color:c.muted,textAlign:"center",marginTop:"14px"}}>Your entries are saved privately on this device.</p>
-    {pastOpen&&(<div onClick={e=>{if(e.target===e.currentTarget)setPastOpen(false);}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.82)",zIndex:9999,display:"flex",flexDirection:"column",justifyContent:"flex-end",animation:"fadeIn .22s"}}>
-      <div style={{background:c.surface,borderRadius:"28px 28px 0 0",padding:"32px 28px 52px",maxHeight:"70vh",overflowY:"auto"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"24px"}}>
-          <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,fontWeight:500}}>PAST ENTRIES</p>
-          <button onClick={()=>setPastOpen(false)} style={{background:"transparent",border:"none",fontSize:"24px",color:c.muted}}>×</button>
-        </div>
-        {past.length===0?<p style={{color:c.muted,fontSize:"15px"}}>No past entries yet.</p>:past.map(([dt,tx])=>(
-          <div key={dt} style={{marginBottom:"20px",paddingBottom:"20px",borderBottom:`1px solid ${c.border}`}}>
-            <p style={{fontSize:"12px",color:c.green,marginBottom:"8px",fontWeight:500}}>{dt}</p>
-            <p style={{fontSize:"15px",color:c.text,lineHeight:1.7,display:"-webkit-box",WebkitLineClamp:3,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{tx}</p>
-          </div>
-        ))}
-      </div>
-    </div>)}
-  </div>);
-}
-
-/* ═════════════════════════════════════════════════════════════
-   MAIN APP
-═════════════════════════════════════════════════════════════ */
-function ResetApp(){
-  const [view,      setView]    =useState("splash");
-  const [tab,       setTab]     =useState("home");
-  const [emotion,   setEmotion] =useState(null);
-  const [dark,      setDark]    =useState(false);
-  const [crisis,    setCrisis]  =useState(false);
-  const [ltopic,    setLtopic]  =useState(null);
-  const [visited,   setVisited] =useState(false);
-  const [sound,     setSound]   =useState("silence");
-  const [soundOn,   setSoundOn] =useState(false);
-  const [trans,     setTrans]   =useState(false);
-  const [gratTy,    setGratTy]  =useState(false);
-  const [activeMed, setActiveMed]=useState(null);
-  const {start:sStart,stop:sStop}=useSoundEngine();
-
-  const hr    =new Date().getHours();
-  const dIdx  =(new Date().getDate()-1)%GRATITUDE.length;
-  const grat  =GRATITUDE[dIdx];
-  const aff   =AFFIRMATIONS[(new Date().getDate()-1)%AFFIRMATIONS.length];
-  const greet =hr<12?"Good morning":hr<17?"Good afternoon":"Good evening";
-  const isNight=hr>=20||hr<6;
-  const scene =MEDITATIONS[dIdx%MEDITATIONS.length];
-
-  useEffect(()=>{if(isNight)setDark(true);},[]);
-  useEffect(()=>{if(view==="splash"){const t=setTimeout(()=>setView("onboard"),2700);return()=>clearTimeout(t);}},[ view]);
-
-  const go=(to,delay=200)=>{setTrans(true);setTimeout(()=>{setView(to);setTimeout(()=>setTrans(false),80);},delay);};
-  const handleSnd=(id)=>{if(id==="silence"||(soundOn&&sound===id)){sStop();setSoundOn(false);setSound("silence");}else{sStart(id);setSoundOn(true);setSound(id);}};
-
-  const c={
-    bg:dark?"#12131A":"#F5F1E9",surface:dark?"#1C1D27":"#FFFFFF",
-    surface2:dark?"#22232F":"#EEE9DF",text:dark?"#E8E2D8":"#3D3D3D",
-    muted:dark?"#787892":"#9A8E80",green:"#526D6A",
-    greenL:dark?"#8FAFA8":"#526D6A",border:dark?"#2A2B3A":"#DFD8CC",
-    dark,
+  const C={
+    bg:"#0A0F0D", surface:"#141A18", border:"#232A28",
+    green:"#526D6A", greenL:"#8FAFA8", text:"#E8E2D8", muted:"#A8A298"
   };
-  const W={fontFamily:"'DM Sans',sans-serif",background:c.bg,color:c.text,minHeight:"100vh",maxWidth:"430px",margin:"0 auto",position:"relative",transition:"background .45s,color .45s"};
 
-  /* Active meditation overlay */
-  if(activeMed) return(<MeditationPlayer med={activeMed} c={c} onClose={()=>setActiveMed(null)}
-    sStart={sStart} sStop={sStop} soundOn={soundOn} setSound={setSound} setSoundOn={setSoundOn}/>);
+  const nav=(v,s=0)=>{setView(v);setStep(s);window.scrollTo(0,0);};
 
-  /* ── SPLASH ── */
-  if(view==="splash") return(<div style={{...W,display:"flex",alignItems:"center",justifyContent:"center",height:"100vh"}}>
-    <div style={{textAlign:"center"}}>
-      <p style={{fontSize:"11px",letterSpacing:".45em",color:c.green,marginBottom:"22px",fontWeight:500,animation:"riseIn .7s ease"}}>RESET</p>
-      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"46px",fontWeight:300,lineHeight:1.15,color:c.text,animation:"riseIn .7s .22s ease both"}}>Your Daily<br/>Peace System</h1>
-      <div style={{marginTop:"36px",display:"flex",justifyContent:"center",gap:"10px",animation:"riseIn .7s .5s ease both"}}>
-        {[0,1,2].map(i=><div key={i} style={{width:"5px",height:"5px",borderRadius:"50%",background:c.green,animation:`pulse ${1.4+i*.3}s ease infinite ${i*.22}s`}}/>)}
+  /* Onboarding */
+  if(view==='onboarding'){
+    const OBS=[
+      {t:"Noise ends here.",s:"The world is loud. Your mind doesn't have to be. Welcome to a space built for quiet."},
+      {t:"One breath at a time.",s:"We don't solve everything today. We just find enough peace for the next ten minutes."},
+      {t:"Your daily reset.",s:"Use this whenever the weight feels too heavy. A simple system to bring you back to center."}
+    ];
+    const c=OBS[step];
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"40px 28px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
+      <Trans bg={C.bg}/>
+      <div style={{marginBottom:"60px",animation:"riseIn .8s ease"}}>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"48px",fontWeight:300,lineHeight:1.1,marginBottom:"20px"}}>{c.t}</h1>
+        <p style={{fontSize:"18px",color:C.muted,lineHeight:1.6,maxWidth:"280px"}}>{c.s}</p>
       </div>
-    </div>
-  </div>);
+      <div style={{marginTop:"auto"}}>
+        <div style={{display:"flex",gap:"8px",marginBottom:"32px"}}>
+          {OBS.map((_,i)=><div key={i} style={{width:i===step?"32px":"8px",height:"3px",background:i===step?C.greenL:C.border,borderRadius:"4px",transition:"all .4s"}}/>)}
+        </div>
+        <button onClick={()=>{if(step<2)setStep(step+1);else nav('checkin');}} 
+          style={{width:"100%",height:"64px",background:C.green,color:C.bg,borderRadius:"20px",fontSize:"17px",fontWeight:500}}>
+          {step===2?"Enter The System":"Continue"}
+        </button>
+      </div>
+    </div>);
+  }
 
-  /* ── ONBOARDING ── */
-  if(view==="onboard") return(<div style={{...W,display:"flex",flexDirection:"column",minHeight:"100vh"}}>
-    <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",padding:"64px 32px 40px",animation:"riseIn .55s ease"}}>
-      <p style={{fontSize:"11px",letterSpacing:".42em",color:c.green,marginBottom:"28px",fontWeight:500}}>RESET</p>
-      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"40px",fontWeight:300,lineHeight:1.22,marginBottom:"22px"}}>Welcome to your<br/>Daily Peace System.</h1>
-      <p style={{fontSize:"18px",color:c.muted,lineHeight:1.78,marginBottom:"48px"}}>Each morning or night, let's gently guide you back to calm.</p>
-      <div style={{display:"flex",flexDirection:"column",gap:"16px",marginBottom:"52px"}}>
-        {[["Tell us how you feel first","The app reads your state and adapts completely to you."],["5 steps to real calm","Breathing, body release, grounding, letting go, and affirmation."],["Come back morning, night, or anytime","No streaks. No guilt. No pressure."]].map(([t,b])=>(
-          <div key={t} style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
-            <div style={{width:"7px",height:"7px",borderRadius:"50%",background:c.green,marginTop:"7px",flexShrink:0}}/>
-            <div><div style={{fontSize:"15px",fontWeight:500,color:c.text,marginBottom:"3px"}}>{t}</div><div style={{fontSize:"14px",color:c.muted,lineHeight:1.6}}>{b}</div></div>
-          </div>
+  /* Check-in */
+  if(view==='checkin'){
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"60px 28px"}}>
+      <Trans bg={C.bg}/>
+      <div style={{textAlign:"center",marginBottom:"50px",animation:"riseIn .6s ease"}}>
+        <div style={{width:"50px",height:"1px",background:C.green,margin:"0 auto 24px",opacity:.4}}/>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"38px",fontWeight:300}}>How is your mind?</h2>
+        <p style={{color:C.muted,fontSize:"15px",marginTop:"12px"}}>Be honest. No one is watching.</p>
+      </div>
+      <div style={{display:"grid",gap:"16px"}}>
+        {EMOTIONS.map((e,i)=>(
+          <button key={e.id} onClick={()=>nav('response',i)} 
+            style={{background:C.surface,padding:"24px",borderRadius:"24px",textAlign:"left",border:`1px solid ${C.border}`,animation:`riseIn .5s ease ${i*.1}s both`}}>
+            <p style={{fontSize:"18px",fontWeight:500,color:C.text}}>{e.label}</p>
+            <p style={{fontSize:"14px",color:C.muted,marginTop:"4px"}}>{e.sub}</p>
+          </button>
         ))}
       </div>
-      <button onClick={()=>go("state")} style={{background:c.green,color:"#fff",border:"none",padding:"20px 40px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>Start</button>
-    </div>
-    <p style={{textAlign:"center",fontSize:"12px",color:c.muted,padding:"20px",letterSpacing:".1em"}}>NO STREAKS · NO PRESSURE · JUST PEACE</p>
-    {trans&&<Trans bg={c.bg}/>}
-  </div>);
+      <button onClick={()=>setShowCrisis(true)} 
+        style={{width:"100%",marginTop:"40px",background:"transparent",color:C.greenL,fontSize:"13px",letterSpacing:".1em"}}>
+        I NEED HELP RIGHT NOW
+      </button>
+      {showCrisis && <CrisisModal c={C} onClose={()=>setShowCrisis(false)}/>}
+    </div>);
+  }
 
-  /* ── STATE ── */
-  if(view==="state") return(<div style={{...W,padding:"60px 28px 40px",animation:"riseIn .5s ease"}}>
-    <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"12px",fontWeight:500}}>CHECK IN</p>
-    <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"10px",lineHeight:1.22}}>How are you feeling<br/>right now?</h1>
-    <p style={{color:c.muted,fontSize:"15px",marginBottom:"36px"}}>No wrong answers. Just be honest.</p>
-    <div style={{display:"flex",flexDirection:"column",gap:"12px",marginBottom:"20px"}}>
-      {EMOTIONS.map(em=>(
-        <button key={em.id} onClick={()=>{setEmotion(em.id);go("response");}}
-          style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"22px 24px",textAlign:"left",transition:"all .22s",display:"flex",justifyContent:"space-between",alignItems:"center"}}
-          onMouseEnter={e=>{e.currentTarget.style.borderColor=c.green;e.currentTarget.style.background=c.surface2;}}
-          onMouseLeave={e=>{e.currentTarget.style.borderColor=c.border;e.currentTarget.style.background=c.surface;}}>
-          <div><div style={{fontSize:"16px",fontWeight:500,color:c.text}}>{em.label}</div><div style={{fontSize:"13px",color:c.muted,marginTop:"3px"}}>{em.sub}</div></div>
-          <span style={{color:c.muted,fontSize:"22px",fontWeight:300}}>›</span>
-        </button>
-      ))}
-    </div>
-    <button onClick={()=>setCrisis(true)} style={{background:"transparent",border:`1px solid ${c.border}`,borderRadius:"14px",padding:"16px 24px",width:"100%",textAlign:"center",fontSize:"14px",color:c.muted,transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>I need immediate help</button>
-    {trans&&<Trans bg={c.bg}/>}
-    {crisis&&<CrisisModal c={c} onClose={()=>setCrisis(false)}/>}
-  </div>);
-
-  /* ── RESPONSE ── */
-  if(view==="response"&&emotion){
-    const r=RESP[emotion];
-    return(<div style={{...W,padding:"80px 32px 60px",display:"flex",flexDirection:"column",minHeight:"100vh",animation:"riseIn .5s ease"}}>
-      <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
-        <div style={{width:"42px",height:"1.5px",background:c.green,marginBottom:"32px"}}/>
-        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"38px",fontWeight:300,lineHeight:1.28,marginBottom:"18px"}}>{r.msg}</h1>
-        <p style={{fontSize:"17px",color:c.muted,lineHeight:1.8,marginBottom:"52px"}}>{r.sub}</p>
-        <button onClick={()=>{if(r.next==="gratitude"){setGratTy(false);setVisited(true);go("gratitude");}else go(r.next);}}
-          style={{background:c.green,color:"#fff",border:"none",padding:"20px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,width:"100%",marginBottom:"14px",letterSpacing:".02em"}}>
+  /* Response Page */
+  if(view==='response'){
+    const e=EMOTIONS[step];const r=RESP[e.id];
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"80px 28px",textAlign:"center"}}>
+      <Trans bg={C.bg}/>
+      <div style={{animation:"riseIn .7s ease"}}>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"42px",fontWeight:300,lineHeight:1.2}}>{r.msg}</h2>
+        <p style={{color:C.muted,fontSize:"17px",marginTop:"20px",maxWidth:"240px",margin:"20px auto 60px"}}>{r.sub}</p>
+        <button onClick={()=>nav(r.next)}
+          style={{width:"100%",height:"64px",background:C.green,color:C.bg,borderRadius:"22px",fontSize:"17px",fontWeight:500,marginBottom:"16px"}}>
           {r.btn}
         </button>
-        <button onClick={()=>go("state")} style={{background:"transparent",border:"none",color:c.muted,fontSize:"14px",padding:"10px"}}>← Go back</button>
+        <button onClick={()=>nav('home')} style={{background:"transparent",color:C.muted,fontSize:"14px"}}>Go to Dashboard</button>
       </div>
-      {trans&&<Trans bg={c.bg}/>}
     </div>);
   }
 
-  /* ── CALM FLOW ── */
-  if(view==="reset5") return(<><CalmFlow c={c} onDone={()=>{setVisited(true);go("completion");}}/>{trans&&<Trans bg={c.bg}/>}</>);
-
-  /* ── COMPLETION ── */
-  if(view==="completion") return(<div style={{...W,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",padding:"48px 32px",textAlign:"center",animation:"riseIn .55s ease"}}>
-    <div style={{width:"76px",height:"76px",borderRadius:"50%",border:`1.5px solid ${c.green}`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 32px",animation:"float 3s ease infinite"}}>
-      <span style={{fontSize:"30px",color:c.green}}>✓</span>
-    </div>
-    <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"46px",fontWeight:300,marginBottom:"16px"}}>Reset complete.</h1>
-    <p style={{fontSize:"17px",color:c.muted,lineHeight:1.78,maxWidth:"320px",margin:"0 auto 8px"}}>You came back to yourself.<br/>That's the hardest and most important thing.</p>
-    <div style={{display:"flex",flexDirection:"column",gap:"12px",marginTop:"44px",width:"100%"}}>
-      <button onClick={()=>{setTab("home");go("main");}} style={{background:c.green,color:"#fff",border:"none",padding:"20px 32px",borderRadius:"100px",fontSize:"16px",fontWeight:500,letterSpacing:".02em"}}>Return Home</button>
-      <button onClick={()=>{setGratTy(false);go("gratitude");}} style={{background:"transparent",border:`1px solid ${c.border}`,padding:"18px 32px",borderRadius:"100px",fontSize:"15px",color:c.muted,transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>Open Today's Gratitude</button>
-    </div>
-    {trans&&<Trans bg={c.bg}/>}
-  </div>);
-
-  /* ── NIGHT ── */
-  if(view==="night") return(<NightReset c={c} onDone={()=>{setVisited(true);go("completion");}} trans={trans} setTrans={setTrans}/>);
-
-  /* ── GRATITUDE ── */
-  if(view==="gratitude"){
-    if(gratTy) return(<div style={{...W,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",padding:"48px 32px",textAlign:"center",animation:"riseIn .55s ease"}}>
-      <div style={{fontSize:"42px",animation:"float 3s ease infinite",marginBottom:"28px"}}>🌿</div>
-      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,marginBottom:"18px",color:c.text}}>Thank you.</h2>
-      <p style={{fontSize:"17px",color:c.muted,lineHeight:1.78,maxWidth:"300px",margin:"0 auto 48px"}}>Taking a moment to be grateful is one of the most powerful things you can do for yourself.</p>
-      <button onClick={()=>{setGratTy(false);setTab("home");go("main");}} style={{background:c.green,color:"#fff",border:"none",padding:"20px 48px",borderRadius:"100px",fontSize:"16px",fontWeight:500}}>Return Home</button>
-      {trans&&<Trans bg={c.bg}/>}
-    </div>);
-    return(<div style={{...W,padding:"52px 28px 80px",animation:"riseIn .5s ease"}}>
-      <button onClick={()=>{setTab("home");go("main");}} style={{background:"transparent",border:"none",color:c.muted,fontSize:"14px",marginBottom:"32px",padding:0,display:"block"}}>← Back</button>
-      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"12px",fontWeight:500}}>TODAY'S GRATITUDE</p>
-      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"30px",lineHeight:1.22}}>{grat.title}</h1>
-      <NatureCard src={scene.img} grad={scene.grad} style={{marginBottom:"20px"}}>
-        <div style={{padding:"32px 28px"}}>
-          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"22px",fontWeight:300,lineHeight:1.72,fontStyle:"italic",color:"#fff"}}>"{grat.text}"</p>
+  /* 5-Step Reset */
+  if(view==='reset5'){
+    const s=CALM_STEPS[step];
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",display:"flex",flexDirection:"column"}}>
+      <Trans bg={C.bg}/>
+      <div style={{padding:"60px 28px 20px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:"40px"}}>
+          <p style={{fontSize:"13px",color:C.greenL,letterSpacing:".2em"}}>STEP {step+1}/5</p>
+          <button onClick={()=>nav('home')} style={{background:"transparent",color:C.muted,fontSize:"13px"}}>Exit</button>
         </div>
-      </NatureCard>
-      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"26px",marginBottom:"20px"}}>
-        <p style={{fontSize:"11px",letterSpacing:".2em",color:c.green,marginBottom:"12px",fontWeight:500}}>REFLECT ON THIS</p>
-        <p style={{fontSize:"16px",color:c.text,lineHeight:1.7}}>{grat.prompt}</p>
+        <div key={step} style={{animation:"riseIn .6s ease"}}>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"44px",fontWeight:300,lineHeight:1.1}}>{s.title}</h2>
+          <p style={{color:C.greenL,fontSize:"15px",marginTop:"8px"}}>{s.sub}</p>
+        </div>
       </div>
-      <div style={{background:c.surface2,borderRadius:"18px",padding:"24px",marginBottom:"28px"}}>
-        <p style={{fontSize:"11px",letterSpacing:".2em",color:c.green,marginBottom:"12px",fontWeight:500}}>TODAY'S AFFIRMATION</p>
-        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"19px",fontWeight:300,lineHeight:1.68,fontStyle:"italic",color:c.text}}>"{aff}"</p>
+      <div style={{flex:1,padding:"0 28px",display:"flex",flexDirection:"column",justifyContent:"center",animation:"fadeIn 1s ease"}}>
+        {s.type==='breath' && <BreathOrb c={C}/>}
+        {s.type==='body' && <p style={{fontSize:"18px",lineHeight:1.7,color:C.text,whiteSpace:"pre-wrap"}}>{s.text}</p>}
+        {s.type==='ground' && <p style={{fontSize:"18px",lineHeight:1.8,color:C.text,whiteSpace:"pre-wrap",fontStyle:"italic"}}>{s.text}</p>}
+        {s.type==='release' && <p style={{fontSize:"18px",lineHeight:1.7,color:C.muted,whiteSpace:"pre-wrap"}}>{s.text}</p>}
+        {s.type==='affirm' && <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",lineHeight:1.3,color:C.text,textAlign:"center",padding:"0 10px"}}>"{AFFIRMATIONS[Math.floor(Math.random()*AFFIRMATIONS.length)]}"</p>}
       </div>
-      <button onClick={()=>setGratTy(true)} style={{background:c.green,color:"#fff",border:"none",padding:"18px 32px",borderRadius:"100px",fontSize:"15px",fontWeight:500,width:"100%",letterSpacing:".02em"}}>I've reflected ✓</button>
-      {trans&&<Trans bg={c.bg}/>}
+      <div style={{padding:"40px 28px 60px"}}>
+        <button onClick={()=>{if(step<4)setStep(step+1);else nav('home');}}
+          style={{width:"100%",height:"64px",background:C.surface,border:`1px solid ${C.border}`,color:C.text,borderRadius:"22px",fontSize:"17px"}}>
+          {step<4?"Next Step":"Complete Reset"}
+        </button>
+      </div>
     </div>);
   }
 
-  /* ── LEARN DETAIL ── */
-  if(view==="learn-detail"&&ltopic) return(<div style={{...W,padding:"52px 28px 80px",animation:"riseIn .5s ease"}}>
-    <button onClick={()=>{setTab("learn");go("main");}} style={{background:"transparent",border:"none",color:c.muted,fontSize:"14px",marginBottom:"28px",padding:0,display:"block"}}>← Learn</button>
-    <div style={{fontSize:"32px",marginBottom:"14px"}}>{ltopic.e}</div>
-    <p style={{fontSize:"11px",letterSpacing:".22em",color:c.green,marginBottom:"8px",fontWeight:500}}>{ltopic.m} read</p>
-    <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"34px",fontWeight:300,marginBottom:"36px",lineHeight:1.25}}>{ltopic.t}</h1>
-    <div style={{display:"flex",flexDirection:"column",gap:"22px"}}>
-      {ltopic.c.map((p,i)=><p key={i} style={{fontSize:"17px",lineHeight:1.84,color:i===0?c.text:c.muted,fontWeight:i===0?500:400}}>{p}</p>)}
-    </div>
-    {trans&&<Trans bg={c.bg}/>}
-  </div>);
-
-  /* ════ MAIN TABS ════ */
-  if(view==="main"||visited){
-    const TABS=[{id:"home",l:"Home",i:"⌂"},{id:"meditate",l:"Meditate",i:"◉"},{id:"night",l:"Night",i:"☽"},{id:"journal",l:"Journal",i:"✏"},{id:"more",l:"More",i:"···"}];
-
-    const LEARN_DATA=[
-      {id:1,e:"🌊",t:"Why Your Mind Feels Overwhelmed",m:"3 min",c:["Your brain isn't broken. It's overwhelmed. There's a big difference.","Every day, your brain processes thousands of pieces of information — emails, decisions, worries. It's doing enormous invisible work.","When things pile up, your brain's alarm system fires. It doesn't care about logic. It just sees pressure.","That feeling of 'I can't think straight'? That's your alarm drowning out your rational mind.","The solution isn't to think harder. It's to slow down just enough so your calm mind can come back online.","You are not too much. You are overloaded. And overloaded systems just need to pause."]},
-      {id:2,e:"⚡",t:"What Anxiety Actually Is",m:"4 min",c:["Anxiety isn't weakness. It's your brain being too good at its job.","Your brain runs a simulation — asking 'what could go wrong?' Not because something is wrong, but to protect you.","It can't tell the difference between a real danger and an email you're nervous about. Both trigger the same alarm.","So your heart races. Your chest tightens. Your thoughts loop. None of that means something bad is happening.","The way out isn't to fight it. It's to send your brain a calm signal: we're safe. We're here.","Anxiety is a messenger. Not a verdict."]},
-      {id:3,e:"🌿",t:"How to Calm Your Thoughts Fast",m:"3 min",c:["When thoughts are racing, the worst thing you can do is fight them.","Name what you feel specifically — 'I feel scared that I'm going to fail.' Naming activates your rational mind.","Breathe out longer than you breathe in. Try 4 counts in, 6 counts out. Your nervous system has a brake pedal.","Look around and name 3 real things you can see. This pulls you out of your head and back into the room.","Say one true thing: 'I am here. This feeling will pass. I have made it through hard things before.'","Done fully, it takes 60 seconds. The goal is to slow down enough that you're driving again."]},
-      {id:4,e:"🔄",t:"When Your Mind Won't Stop Looping",m:"4 min",c:["You've been in bed for an hour. Your brain won't stop. The same thoughts, over and over.","Your brain is stuck in problem-solving mode — running the same loop hoping to find the answer.","The way to break the loop isn't to solve the problem. It's to give your brain something different to do.","Write down every thought. Your brain will stop running it because it feels 'stored.'","Change your physical position. Stand up. Splash water on your face.","Accept you might not solve it tonight. Some things need sleep, not more thinking."]},
-    ];
-
-    const Home=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"24px"}}>
-        <div><p style={{fontSize:"14px",color:c.muted,marginBottom:"4px"}}>{greet}</p><h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"34px",fontWeight:300,lineHeight:1.22}}>How are you<br/>feeling today?</h1></div>
-      </div>
-      {/* Hero — nature + Reset CTA */}
-      <NatureCard src={scene.img} grad={scene.grad} onClick={()=>{setEmotion(null);go("state");}} style={{marginBottom:"14px"}}>
-        <div style={{padding:"28px 26px 24px"}}>
-          <p style={{fontSize:"11px",letterSpacing:".28em",color:"rgba(255,255,255,.6)",marginBottom:"10px"}}>YOUR DAILY RESET</p>
-          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"28px",fontWeight:300,color:"#fff",marginBottom:"8px",lineHeight:1.2}}>5-Step Calm Flow</p>
-          <p style={{fontSize:"13px",color:"rgba(255,255,255,.6)"}}>Breathe · Release · Ground · Let go · Affirm</p>
+  /* Home Dashboard */
+  if(view==='home'){
+    const g=GRATITUDE[new Date().getDate() % GRATITUDE.length];
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"60px 24px 100px"}}>
+      <Trans bg={C.bg}/>
+      <header style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"40px"}}>
+        <div>
+          <p style={{fontSize:"12px",color:C.muted,letterSpacing:".1em",marginBottom:"4px"}}>WELCOME BACK</p>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"32px",fontWeight:300}}>Find your center.</h2>
         </div>
+        <button onClick={()=>nav('checkin')} style={{width:"44px",height:"44px",borderRadius:"50%",background:C.surface,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+           <div style={{width:"18px",height:"18px",border:`1.5px solid ${C.greenL}`,borderRadius:"50%"}}/>
+        </button>
+      </header>
+
+      <NatureCard src={MEDITATIONS[1].img} grad="linear-gradient(to right, rgba(20,26,24,1), rgba(20,26,24,0.4))" 
+        onClick={()=>nav('meditation_list')} style={{height:"160px",marginBottom:"32px",padding:"24px"}}>
+        <p style={{fontSize:"11px",letterSpacing:".2em",color:C.greenL,marginBottom:"8px"}}>FEATURED</p>
+        <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"28px",fontWeight:300,marginBottom:"8px"}}>Inner Stillness</h3>
+        <p style={{fontSize:"13px",color:C.muted}}>5 minute audio session</p>
       </NatureCard>
-      {/* Two cards row */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"14px"}}>
-        <div onClick={()=>{setNStep&&setNStep(0);go("night");}} style={{background:dark?"#191B2A":"#1C1E30",borderRadius:"20px",padding:"20px",cursor:"pointer",transition:"opacity .2s"}} onMouseEnter={e=>e.currentTarget.style.opacity=".9"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-          <div style={{fontSize:"24px",marginBottom:"10px",animation:"moonSway 6s ease-in-out infinite"}}>☽</div>
-          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"17px",fontWeight:300,color:"#E8E2D8",lineHeight:1.3}}>Night Reset</p>
-          <p style={{fontSize:"12px",color:"#4A4A68",marginTop:"4px"}}>Calm before sleep</p>
+
+      <section style={{marginBottom:"32px"}}>
+        <h4 style={{fontSize:"13px",letterSpacing:".1em",color:C.muted,marginBottom:"16px"}}>TODAY'S RESET TOOLS</h4>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
+          <button onClick={()=>nav('reset5')} style={{background:C.surface,padding:"20px",borderRadius:"22px",textAlign:"left",border:`1px solid ${C.border}`}}>
+            <p style={{fontSize:"15px",fontWeight:500,marginBottom:"4px"}}>5-Step Reset</p>
+            <p style={{fontSize:"12px",color:C.muted}}>Quick Calm</p>
+          </button>
+          <button onClick={()=>nav('gratitude')} style={{background:C.surface,padding:"20px",borderRadius:"22px",textAlign:"left",border:`1px solid ${C.border}`}}>
+            <p style={{fontSize:"15px",fontWeight:500,marginBottom:"4px"}}>Gratitude</p>
+            <p style={{fontSize:"12px",color:C.muted}}>Daily Prompt</p>
+          </button>
+          <button onClick={()=>nav('night')} style={{background:C.surface,padding:"20px",borderRadius:"22px",textAlign:"left",border:`1px solid ${C.border}`,gridColumn:"span 2"}}>
+            <p style={{fontSize:"15px",fontWeight:500,marginBottom:"4px"}}>Night System</p>
+            <p style={{fontSize:"12px",color:C.muted}}>End your day with grace</p>
+          </button>
         </div>
-        <div onClick={()=>{setGratTy(false);go("gratitude");}} style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"20px",padding:"20px",cursor:"pointer",transition:"border-color .25s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
-          <div style={{fontSize:"24px",marginBottom:"10px"}}>🌿</div>
-          <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"17px",fontWeight:300,color:c.text,lineHeight:1.3}}>Gratitude</p>
-          <p style={{fontSize:"12px",color:c.muted,marginTop:"4px"}}>{grat.title}</p>
+      </section>
+
+      <section>
+        <h4 style={{fontSize:"13px",letterSpacing:".1em",color:C.muted,marginBottom:"16px"}}>TODAY'S WISDOM</h4>
+        <div style={{background:C.surface,padding:"28px",borderRadius:"28px",border:`1px solid ${C.border}`,fontStyle:"italic"}}>
+          <p style={{fontSize:"18px",lineHeight:1.6,color:C.text}}>"{AFFIRMATIONS[new Date().getDate() % AFFIRMATIONS.length]}"</p>
+        </div>
+      </section>
+    </div>);
+  }
+
+  /* Gratitude Page */
+  if(view==='gratitude'){
+    const g=GRATITUDE[step % GRATITUDE.length];
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"60px 28px"}}>
+      <Trans bg={C.bg}/>
+      <div style={{display:"flex",justifyContent:"space-between",marginBottom:"40px"}}>
+        <button onClick={()=>nav('home')} style={{background:"transparent",color:C.muted}}>Back</button>
+        <button onClick={()=>setStep(Math.floor(Math.random()*GRATITUDE.length))} style={{background:"transparent",color:C.greenL}}>New Prompt</button>
+      </div>
+      <div key={step} style={{animation:"riseIn .7s ease"}}>
+        <p style={{fontSize:"12px",letterSpacing:".2em",color:C.greenL,marginBottom:"12px"}}>DAILY GRATITUDE</p>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"40px",fontWeight:300,lineHeight:1.2,marginBottom:"24px"}}>{g.title}</h2>
+        <p style={{fontSize:"20px",lineHeight:1.6,color:C.text,marginBottom:"40px"}}>{g.text}</p>
+        <div style={{background:C.surface,padding:"24px",borderRadius:"24px",border:`1px solid ${C.border}`}}>
+          <p style={{fontSize:"14px",color:C.greenL,marginBottom:"12px",fontWeight:500}}>REFLECTION</p>
+          <p style={{fontSize:"17px",color:C.muted,lineHeight:1.5}}>{g.prompt}</p>
         </div>
       </div>
-      {/* Affirmation */}
-      <div style={{background:c.surface2,borderRadius:"22px",padding:"22px 24px",marginBottom:"14px"}}>
-        <p style={{fontSize:"11px",letterSpacing:".28em",color:c.green,marginBottom:"12px",fontWeight:500}}>TODAY'S AFFIRMATION</p>
-        <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"18px",fontWeight:300,lineHeight:1.65,fontStyle:"italic",color:c.text}}>"{aff}"</p>
+    </div>);
+  }
+
+  /* Night System */
+  if(view==='night'){
+    const s=NIGHT_STEPS[step];
+    return(<div style={{background:"#05050A",color:"#E8E2D8",minHeight:"100vh",padding:"60px 28px 80px",display:"flex",flexDirection:"column"}}>
+      <Trans bg="#05050A"/>
+      <div style={{display:"flex",justifyContent:"space-between",marginBottom:"40px"}}>
+        <p style={{fontSize:"12px",color:"#545470",letterSpacing:".2em"}}>NIGHT RESET {step+1}/5</p>
+        <button onClick={()=>nav('home')} style={{background:"transparent",color:"#545470"}}>Exit</button>
       </div>
-      {/* Sound */}
-      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"22px",padding:"20px 24px",marginBottom:"14px"}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"14px"}}>
-          <p style={{fontSize:"11px",letterSpacing:".28em",color:c.green,fontWeight:500}}>AMBIENT SOUND</p>
-          {soundOn&&<Waveform active={true} color={c.green}/>}
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"8px"}}>
-          {["rain","ocean","forest"].map(id=>(<button key={id} onClick={()=>handleSnd(id)} style={{padding:"12px 6px",borderRadius:"14px",border:`1px solid ${soundOn&&sound===id?c.green:c.border}`,background:soundOn&&sound===id?`${c.green}18`:"transparent",fontSize:"13px",color:soundOn&&sound===id?c.green:c.muted,fontWeight:soundOn&&sound===id?500:400,transition:"all .25s",display:"flex",flexDirection:"column",alignItems:"center",gap:"5px"}}>
-            <span style={{fontSize:"18px"}}>{id==="rain"?"🌧":id==="ocean"?"🌊":"🌿"}</span>
-            <span>{id[0].toUpperCase()+id.slice(1)}</span>
-          </button>))}
-        </div>
-        {soundOn&&<button onClick={()=>handleSnd("silence")} style={{marginTop:"10px",background:"transparent",border:`1px solid ${c.border}`,borderRadius:"100px",padding:"8px 20px",fontSize:"12px",color:c.muted,width:"100%",transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>Stop sound</button>}
+      <div key={step} style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",animation:"riseIn .8s ease"}}>
+        <div style={{fontSize:"40px",marginBottom:"24px",animation:"moonSway 6s ease-in-out infinite"}}>{s.icon}</div>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"42px",fontWeight:300,marginBottom:"20px"}}>{s.title}</h2>
+        {s.type==='nightBreath' ? <NightBreath/> : <p style={{fontSize:"19px",lineHeight:1.6,color:"#A8A2B0",whiteSpace:"pre-wrap"}}>{s.body}</p>}
       </div>
-      {/* Crisis */}
-      <button onClick={()=>setCrisis(true)} style={{background:"transparent",border:`1px dashed ${c.border}`,borderRadius:"16px",padding:"18px 22px",width:"100%",textAlign:"left",display:"flex",alignItems:"center",gap:"14px",transition:"border-color .2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
-        <div style={{width:"36px",height:"36px",borderRadius:"50%",border:`1px solid ${c.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",color:c.muted,flexShrink:0}}>!</div>
-        <div><div style={{fontSize:"14px",fontWeight:500,color:c.text}}>I need immediate help</div><div style={{fontSize:"12px",color:c.muted,marginTop:"2px"}}>Crisis support — always available</div></div>
+      <button onClick={()=>{if(step<4)setStep(step+1);else nav('home');}}
+        style={{width:"100%",height:"64px",background:"#1A1A2E",color:"#8FAFA8",borderRadius:"22px",marginTop:"40px",border:"1px solid #252540"}}>
+        {step<4?"Next Step":"Good Night"}
       </button>
     </div>);
+  }
 
-    /* MEDITATE TAB */
-    const Meditate=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
-      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"8px",fontWeight:500}}>GUIDED MEDITATION</p>
-      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"8px"}}>Find Your Still</h1>
-      <p style={{fontSize:"15px",color:c.muted,marginBottom:"28px"}}>Choose what you need right now. Let us guide you there.</p>
-      <div style={{display:"flex",flexDirection:"column",gap:"14px"}}>
-        {MEDITATIONS.map(m=>(
-          <NatureCard key={m.id} src={m.img} grad={m.grad} onClick={()=>setActiveMed(m)} style={{cursor:"pointer"}}>
-            <div style={{padding:"24px 24px 20px",display:"flex",alignItems:"center",gap:"16px"}}>
-              <div style={{flex:1}}>
-                <div style={{display:"flex",gap:"8px",alignItems:"center",marginBottom:"8px"}}>
-                  <span style={{fontSize:"11px",letterSpacing:".22em",color:"rgba(255,255,255,.55)",fontWeight:500}}>{m.badge.toUpperCase()}</span>
-                  <span style={{fontSize:"11px",color:"rgba(255,255,255,.35)"}}>·</span>
-                  <span style={{fontSize:"11px",color:"rgba(255,255,255,.55)"}}>{m.duration}</span>
-                </div>
-                <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"22px",fontWeight:300,color:"#fff",marginBottom:"4px",lineHeight:1.2}}>{m.title}</p>
-                <p style={{fontSize:"13px",color:"rgba(255,255,255,.6)"}}>{m.tagline}</p>
+  /* Meditation List */
+  if(view==='meditation_list'){
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",padding:"60px 24px"}}>
+      <Trans bg={C.bg}/>
+      <header style={{marginBottom:"40px"}}>
+        <button onClick={()=>nav('home')} style={{color:C.muted,fontSize:"14px",marginBottom:"20px"}}>← Dashboard</button>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"38px",fontWeight:300}}>Audio Sessions</h2>
+        <p style={{color:C.muted,fontSize:"15px",marginTop:"8px"}}>Find space in the sound.</p>
+      </header>
+      <div style={{display:"grid",gap:"20px"}}>
+        {MEDITATIONS.map((m,i)=>(
+          <NatureCard key={m.id} src={m.img} grad={`linear-gradient(to bottom, transparent, ${m.grad})`}
+            onClick={()=>{setActiveMed(m);setMedStep(0);nav('player');}}
+            style={{height:"200px",padding:"24px",display:"flex",flexDirection:"column",justifyContent:"flex-end",animation:`riseIn .5s ease ${i*.1}s both`}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
+              <div>
+                <p style={{fontSize:"10px",letterSpacing:".15em",color:C.greenL,marginBottom:"4px"}}>{m.badge.toUpperCase()}</p>
+                <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"26px",fontWeight:300}}>{m.title}</h3>
               </div>
-              <div style={{width:"42px",height:"42px",borderRadius:"50%",border:"1px solid rgba(255,255,255,.3)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,backdropFilter:"blur(8px)",background:"rgba(255,255,255,.1)"}}>
-                <span style={{color:"#fff",fontSize:"16px"}}>▷</span>
-              </div>
+              <p style={{fontSize:"12px",opacity:.8}}>{m.duration}</p>
             </div>
           </NatureCard>
         ))}
       </div>
     </div>);
+  }
 
-    const Learn=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
-      <p style={{fontSize:"11px",letterSpacing:".32em",color:c.green,marginBottom:"8px",fontWeight:500}}>UNDERSTAND YOUR MIND</p>
-      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"8px"}}>Learn</h1>
-      <p style={{fontSize:"15px",color:c.muted,marginBottom:"32px"}}>Short reads. Human language. No clinical tone.</p>
-      <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
-        {LEARN_DATA.map(t=>(<div key={t.id} onClick={()=>{setLtopic(t);go("learn-detail");}} style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px 22px",cursor:"pointer",display:"flex",alignItems:"center",gap:"16px",transition:"border-color .22s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
-          <div style={{fontSize:"26px",flexShrink:0}}>{t.e}</div>
-          <div style={{flex:1}}><div style={{fontSize:"16px",fontWeight:500,color:c.text,marginBottom:"4px"}}>{t.t}</div><div style={{fontSize:"13px",color:c.muted}}>{t.m} read</div></div>
-          <span style={{color:c.muted,fontSize:"20px"}}>›</span>
-        </div>))}
-      </div>
-    </div>);
+  /* Player */
+  if(view==='player'){
+    const m=activeMed;const seg=m.segs[medStep];
+    useEffect(()=>{
+      if(isPlaying){
+        const timer=setTimeout(()=>{
+          if(medStep<m.segs.length-1)setMedStep(medStep+1);
+          else{setIsPlaying(false);sound.stop();}
+        },seg.s*1000);
+        return()=>clearTimeout(timer);
+      }
+    },[isPlaying,medStep]);
 
-    const More=()=>(<div style={{padding:"52px 28px 24px",animation:"riseIn .45s ease"}}>
-      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"36px",fontWeight:300,marginBottom:"32px"}}>More</h1>
-      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px 22px",marginBottom:"12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <div><div style={{fontSize:"16px",fontWeight:500,color:c.text}}>Dark Mode</div><div style={{fontSize:"13px",color:c.muted,marginTop:"2px"}}>Auto-enables at night (8pm – 6am)</div></div>
-        <button onClick={()=>setDark(d=>!d)} style={{width:"52px",height:"28px",borderRadius:"14px",border:"none",background:dark?c.green:c.border,position:"relative",transition:"background .3s",flexShrink:0}}>
-          <div style={{position:"absolute",top:"4px",left:dark?"26px":"4px",width:"20px",height:"20px",borderRadius:"50%",background:"#fff",transition:"left .28s ease",boxShadow:"0 1px 4px rgba(0,0,0,.2)"}}/>
-        </button>
-      </div>
-      <div onClick={()=>setTab("learn")} style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"20px 22px",marginBottom:"12px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.borderColor=c.green} onMouseLeave={e=>e.currentTarget.style.borderColor=c.border}>
-        <div style={{fontSize:"16px",fontWeight:500,color:c.text}}>Learn about your mind</div>
-        <span style={{color:c.muted,fontSize:"20px"}}>›</span>
-      </div>
-      <div style={{background:c.surface,border:`1px solid ${c.border}`,borderRadius:"18px",padding:"26px",marginTop:"12px"}}>
-        <p style={{fontSize:"11px",letterSpacing:".22em",color:c.green,marginBottom:"20px",fontWeight:500}}>ABOUT RESET</p>
-        {[["When to use","Morning Reset to start clear. Night Reset to calm your mind before sleep. Meditations anytime. Journal to process your day."],["What this is NOT","Not therapy. Not a replacement for professional mental health care. A real-time first-response tool for everyday emotional moments."],["No streaks. No guilt.","Come when you need it. Leave when you're ready. Rest is not failure."]].map(([t,b])=>(
-          <div key={t} style={{marginBottom:"20px"}}><div style={{fontSize:"14px",fontWeight:500,color:c.text,marginBottom:"6px"}}>{t}</div><div style={{fontSize:"14px",color:c.muted,lineHeight:1.7}}>{b}</div></div>
-        ))}
-      </div>
-      <p style={{textAlign:"center",fontSize:"12px",color:c.muted,marginTop:"32px",letterSpacing:".08em"}}>RESET · YOUR DAILY PEACE SYSTEM · V3.0</p>
-    </div>);
+    const toggle=()=>{
+      if(!isPlaying){setIsPlaying(true);sound.start(m.sound);}
+      else{setIsPlaying(false);sound.stop();}
+    };
 
-    return(<div style={{...W,paddingBottom:"84px"}}>
-      {tab==="home"    &&<Home/>}
-      {tab==="meditate"&&<Meditate/>}
-      {tab==="journal" &&<JournalTab c={c}/>}
-      {tab==="learn"   &&<Learn/>}
-      {tab==="more"    &&<More/>}
-
-      {/* BOTTOM NAV */}
-      <nav style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:"430px",background:dark?"rgba(28,29,39,.97)":"rgba(245,241,233,.97)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderTop:`1px solid ${c.border}`,display:"flex",padding:"8px 0 24px",zIndex:100,transition:"background .45s,border-color .45s"}}>
-        {TABS.map(t=>{
-          const active=tab===t.id&&t.id!=="reset"&&t.id!=="night";
-          return(<button key={t.id}
-            onClick={()=>{
-              if(t.id==="reset"){go("state",190);}
-              else if(t.id==="night"){go("night",190);}
-              else setTab(t.id);
-            }}
-            style={{flex:1,background:"transparent",border:"none",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px",padding:"4px 0",transition:"opacity .2s"}}
-            onMouseEnter={e=>e.currentTarget.style.opacity=".7"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-            <span style={{fontSize:"18px",color:active?c.green:c.muted,transition:"color .25s"}}>{t.i}</span>
-            <span style={{fontSize:"10px",color:active?c.green:c.muted,fontWeight:active?500:400,transition:"color .25s"}}>{t.l}</span>
-            {active&&<div style={{width:"4px",height:"4px",borderRadius:"50%",background:c.green,animation:"fadeIn .3s"}}/>}
-          </button>);
-        })}
-      </nav>
-      {trans&&<Trans bg={c.bg}/>}
-      {crisis&&<CrisisModal c={c} onClose={()=>setCrisis(false)}/>}
+    return(<div style={{background:C.bg,color:C.text,minHeight:"100vh",display:"flex",flexDirection:"column"}}>
+      <Trans bg={C.bg}/>
+      <div style={{position:"fixed",inset:0,zIndex:0}}>
+        <img src={m.img} alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:.3}}/>
+        <div style={{position:"absolute",inset:0,background:`linear-gradient(to bottom, ${C.bg}, transparent, ${C.bg})`}}/>
+      </div>
+      <div style={{position:"relative",zIndex:2,padding:"60px 28px",flex:1,display:"flex",flexDirection:"column"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"40px"}}>
+          <button onClick={()=>{sound.stop();nav('meditation_list');}} style={{background:"transparent",color:C.text,fontSize:"20px"}}>×</button>
+          <Waveform active={isPlaying} color={C.greenL}/>
+          <div style={{width:"20px"}}/>
+        </div>
+        <div style={{textAlign:"center",marginTop:"40px"}}>
+          <p style={{fontSize:"12px",letterSpacing:".2em",color:C.greenL,marginBottom:"12px"}}>SITTING IN STILLNESS</p>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"32px",fontWeight:300}}>{m.title}</h2>
+        </div>
+        <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"0 10px"}}>
+           <p key={medStep} style={{fontSize:"22px",lineHeight:1.6,textAlign:"center",animation:"fadeIn 2s ease",color:C.text,whiteSpace:"pre-wrap"}}>
+             {isPlaying?seg.text:m.tagline}
+           </p>
+        </div>
+        <div style={{paddingBottom:"80px",textAlign:"center"}}>
+          <button onClick={toggle} style={{width:"80px",height:"80px",borderRadius:"50%",background:isPlaying?"transparent":C.green,border:`2px solid ${C.green}`,color:isPlaying?C.green:C.bg,fontSize:"14px",fontWeight:600,transition:"all .4s"}}>
+            {isPlaying?"PAUSE":"START"}
+          </button>
+          <p style={{fontSize:"13px",color:C.muted,marginTop:"24px"}}>{isPlaying?`Step ${medStep+1} of ${m.segs.length}`:"Ready when you are"}</p>
+        </div>
+      </div>
     </div>);
   }
 
   return null;
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<ResetApp/>);
+const root=ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
 </script>
 </body>
 </html>
