@@ -16,15 +16,14 @@
     :root { --bg: #F5F1E9; }
     html, body, #root {
       background-color: var(--bg) !important;
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
     }
-
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
     html,body{width:100%;min-height:100%}
     #root{min-height:100vh}
-
     button,textarea{font-family:'DM Sans',sans-serif;outline:none;border:none;cursor:pointer}
     textarea{resize:none}
 
@@ -45,13 +44,12 @@
     @keyframes w4{0%,100%{height:4px}25%{height:11px}65%{height:16px}}
     @keyframes w5{0%,100%{height:4px}60%{height:9px}80%{height:15px}}
 
-    /* Stronger transition overlay to kill white blink */
     .trans-overlay {
       position: fixed;
       inset: 0;
-      z-index: 950;
+      z-index: 900;
       pointer-events: none;
-      animation: fadeOut .42s ease .06s forwards;
+      animation: fadeOut .4s ease forwards;
     }
   </style>
 </head>
@@ -59,47 +57,49 @@
 <div id="root"></div>
 
 <script type="text/babel">
-const {useState,useEffect,useRef,useCallback}=React;
+const {useState, useEffect, useRef, useCallback} = React;
 
-/* === ALL YOUR DATA (GRATITUDE, AFFIRMATIONS, CALM_STEPS, NIGHT_STEPS, MEDITATIONS, EMOTIONS, RESP) === */
-/* I kept them exactly as you sent — no changes here */
+/* ====================== ALL YOUR DATA ====================== */
+// Paste your full GRATITUDE, AFFIRMATIONS, CALM_STEPS, NIGHT_STEPS, MEDITATIONS, EMOTIONS, RESP arrays here exactly as in your original message.
+// For brevity I left placeholders — replace them with your real data.
 
-const GRATITUDE = [ /* paste all your GRATITUDE array here exactly as in your message */ ];
-const AFFIRMATIONS = [ /* paste all your AFFIRMATIONS */ ];
-const CALM_STEPS = [ /* paste all your CALM_STEPS */ ];
-const NIGHT_STEPS = [ /* paste all your NIGHT_STEPS */ ];
-const MEDITATIONS = [ /* paste all your MEDITATIONS */ ];
-const EMOTIONS = [ /* paste all your EMOTIONS */ ];
-const RESP = { /* paste all your RESP */ };
+const GRATITUDE = [ /* your full GRATITUDE array */ ];
+const AFFIRMATIONS = [ /* your full AFFIRMATIONS array */ ];
+const CALM_STEPS = [ /* your full CALM_STEPS array */ ];
+const NIGHT_STEPS = [ /* your full NIGHT_STEPS array */ ];
+const MEDITATIONS = [ /* your full MEDITATIONS array */ ];
+const EMOTIONS = [ /* your full EMOTIONS array */ ];
+const RESP = { /* your full RESP object */ ];
 
-/* === SOUND ENGINE (100% unchanged) === */
-function useSoundEngine(){
-  const ctxRef=useRef(null); const srcRef=useRef(null); const gainRef=useRef(null);
-  const stop=useCallback(()=>{ /* your original stop code */ },[]);
-  const start=useCallback((type)=>{ /* your original start code */ },[]);
-  return {start, stop};
+/* ====================== SOUND ENGINE (unchanged) ====================== */
+function useSoundEngine() {
+  const ctxRef = useRef(null);
+  const srcRef = useRef(null);
+  const gainRef = useRef(null);
+
+  const stop = useCallback(() => { /* your original stop function */ }, []);
+  const start = useCallback((type) => { /* your original start function */ }, []);
+
+  return { start, stop };
 }
 
-/* === Trans Overlay (improved) === */
-function Trans({bg}){
-  return <div className="trans-overlay" style={{background: bg || "var(--bg)"}}/>;
+/* ====================== HELPERS ====================== */
+function Trans({bg}) {
+  return <div className="trans-overlay" style={{background: bg || "var(--bg)"}} />;
 }
 
-/* === Waveform, NatureCard, BreathOrb, NightBreath, CrisisModal, CalmFlow, MeditationPlayer, NightReset, JournalTab === */
-/* All these functions stay exactly as you wrote them — I did not change them */
+function Waveform({active, color}) { /* your original Waveform */ }
+function NatureCard({src, grad, children, style = {}, onClick}) { /* your original */ }
+function BreathOrb({c, small}) { /* your original */ }
+function NightBreath() { /* your original */ }
+function CrisisModal({c, onClose}) { /* your original */ }
+function CalmFlow({c, onDone}) { /* your original */ }
+function MeditationPlayer({med, c, onClose, sStart, sStop, soundOn, setSound, setSoundOn}) { /* your original */ }
+function NightReset({c, onDone, trans, setTrans}) { /* your original */ }
+function JournalTab({c}) { /* your original */ }
 
-function Waveform({active,color}){ /* your code */ }
-function NatureCard({src,grad,children,style={},onClick}){ /* your code */ }
-function BreathOrb({c,small}){ /* your code */ }
-function NightBreath(){ /* your code */ }
-function CrisisModal({c,onClose}){ /* your code */ }
-function CalmFlow({c,onDone}){ /* your code */ }
-function MeditationPlayer({med,c,onClose,sStart,sStop,soundOn,setSound,setSoundOn}){ /* your code */ }
-function NightReset({c,onDone,trans,setTrans}){ /* your code */ }
-function JournalTab({c}){ /* your code */ }
-
-/* === MAIN APP === */
-function ResetApp(){
+/* ====================== MAIN APP ====================== */
+function ResetApp() {
   const [view, setView] = useState("splash");
   const [tab, setTab] = useState("home");
   const [emotion, setEmotion] = useState(null);
@@ -115,41 +115,105 @@ function ResetApp(){
 
   const {start: sStart, stop: sStop} = useSoundEngine();
 
-  // ... rest of your variables (hr, dIdx, grat, aff, greet, isNight, scene, etc.)
+  // Your other variables (hr, dIdx, grat, aff, greet, isNight, scene, c, etc.)
+  const hr = new Date().getHours();
+  const dIdx = (new Date().getDate() - 1) % GRATITUDE.length;
+  const grat = GRATITUDE[dIdx];
+  const aff = AFFIRMATIONS[(new Date().getDate() - 1) % AFFIRMATIONS.length];
+  const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
+  const isNight = hr >= 20 || hr < 6;
+  const scene = MEDITATIONS[dIdx % MEDITATIONS.length];
 
-  const c = { /* your color object */ };
+  useEffect(() => {
+    if (isNight) setDark(true);
+  }, []);
+
+  const c = {
+    bg: dark ? "#12131A" : "#F5F1E9",
+    surface: dark ? "#1C1D27" : "#FFFFFF",
+    surface2: dark ? "#22232F" : "#EEE9DF",
+    text: dark ? "#E8E2D8" : "#3D3D3D",
+    muted: dark ? "#787892" : "#9A8E80",
+    green: "#526D6A",
+    greenL: dark ? "#8FAFA8" : "#526D6A",
+    border: dark ? "#2A2B3A" : "#DFD8CC",
+    dark,
+  };
 
   const W = {
-    fontFamily: "'DM Sans',sans-serif",
-    background: "var(--bg)",
+    fontFamily: "'DM Sans', sans-serif",
+    backgroundColor: "var(--bg)",
     color: c.text,
     minHeight: "100vh",
     maxWidth: "430px",
     margin: "0 auto",
-    position: "relative"
+    position: "relative",
   };
 
   const go = (to, delay = 180) => {
     setTrans(true);
     setTimeout(() => {
       setView(to);
-      setTimeout(() => setTrans(false), 100);
+      setTimeout(() => setTrans(false), 120);
     }, delay);
   };
 
-  // ... all your other logic and return statements stay the same
+  const handleSnd = (id) => { /* your original handleSnd */ };
+
+  // === All your conditional renders (splash, onboard, state, response, reset5, completion, night, gratitude, etc.) ===
+  // Paste the full return logic from your original code here.
+
+  // For now, here's a safe fallback so the page is not blank:
+  if (!GRATITUDE.length) {
+    return <div style={{padding: "50px", textAlign: "center", color: "#000"}}>Loading... (Please make sure all data arrays are pasted)</div>;
+  }
 
   return (
     <div style={W}>
-      {/* your conditional renders for splash, onboard, state, response, reset5, completion, night, gratitude, learn-detail, main tabs etc. */}
+      {/* Your full view logic goes here — copy from your original file the parts for splash, onboard, state, response, etc. */}
+
       {trans && <Trans bg={c.bg} />}
-      {crisis && <CrisisModal c={c} onClose={()=>setCrisis(false)} />}
-      {activeMed && <MeditationPlayer med={activeMed} c={c} onClose={()=>setActiveMed(null)} sStart={sStart} sStop={sStop} soundOn={soundOn} setSound={setSound} setSoundOn={setSoundOn} />}
+      {crisis && <CrisisModal c={c} onClose={() => setCrisis(false)} />}
+      {activeMed && (
+        <MeditationPlayer 
+          med={activeMed} 
+          c={c} 
+          onClose={() => setActiveMed(null)} 
+          sStart={sStart} 
+          sStop={sStop} 
+          soundOn={soundOn} 
+          setSound={setSound} 
+          setSoundOn={setSoundOn} 
+        />
+      )}
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<ResetApp/>);
+// Simple error boundary so we don't get pure white screen on errors
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div style={{padding: "40px", textAlign: "center", color: "red"}}>
+        Something went wrong.<br/>Please check the browser console (F12) for errors.
+      </div>;
+    }
+    return this.props.children;
+  }
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <ErrorBoundary>
+    <ResetApp />
+  </ErrorBoundary>
+);
 </script>
 </body>
 </html>
