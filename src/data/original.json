@@ -1,0 +1,638 @@
+{
+  "GRATITUDE": [
+    {
+      "title": "The Gift of Today",
+      "text": "Thank you, God, for another morning. Not everyone woke up today — I did. That alone is something I did not earn.",
+      "prompt": "What's one small thing today that usually goes unnoticed?"
+    },
+    {
+      "title": "The People Around You",
+      "text": "Thank you for the people in my life who show up in quiet ways — not always with words, but with presence.",
+      "prompt": "Who made your life a little easier this week?"
+    },
+    {
+      "title": "Your Body Carried You",
+      "text": "Thank you for a body that breathes without me asking. For a heart that kept going through every hard season.",
+      "prompt": "What has your body handled lately that deserves a thank you?"
+    },
+    {
+      "title": "The Hard Days",
+      "text": "Thank you even for the hard days. They proved I was stronger than I believed. I made it through every single one.",
+      "prompt": "Which difficult moment this year taught you something real?"
+    },
+    {
+      "title": "Clean Water & Shelter",
+      "text": "Thank you for clean water. For shelter from the storm. For ordinary comforts I walk past without truly seeing.",
+      "prompt": "Name one comfort you've been taking for granted."
+    },
+    {
+      "title": "This Breath",
+      "text": "Right now, I am breathing. That means I am alive. That means there is still time — for healing, for love, for becoming.",
+      "prompt": "If you had more time, what would you do more of?"
+    },
+    {
+      "title": "The Learning",
+      "text": "Thank you for every mistake that taught me something. For every loss that showed me what truly mattered.",
+      "prompt": "What do you know now that you didn't know a year ago?"
+    },
+    {
+      "title": "Sunlight",
+      "text": "Thank you for the light that finds its way in — through windows, through people, through unexpected moments of beauty.",
+      "prompt": "What small moment of beauty did you witness today?"
+    },
+    {
+      "title": "Second Chances",
+      "text": "Thank you for every new day — a fresh page. Not a reminder of what I failed, but a chance to begin again.",
+      "prompt": "What would you do differently if today were a second chance?"
+    },
+    {
+      "title": "Rest",
+      "text": "Thank you for sleep. For the quiet that holds us between one day and the next. For rest that asks nothing of us.",
+      "prompt": "When did you last truly rest — mind and body both?"
+    },
+    {
+      "title": "Kindness",
+      "text": "Thank you for every act of kindness I've received — the ones I remember and the ones I've forgotten. They all landed.",
+      "prompt": "Who was unexpectedly kind to you recently?"
+    },
+    {
+      "title": "Music",
+      "text": "Thank you for music. For a song that arrived at exactly the right moment. For the feeling of being understood by a stranger's melody.",
+      "prompt": "What song has meant the most to you lately?"
+    },
+    {
+      "title": "Growth",
+      "text": "Thank you for who I am becoming. Even slowly. Even imperfectly. I am not the same person I was a year ago.",
+      "prompt": "How are you different from who you were 12 months ago?"
+    },
+    {
+      "title": "Nourishment",
+      "text": "Thank you for food on the table. For the simple act of a meal. For energy that powers the life I'm building.",
+      "prompt": "When did you last eat something that made you feel truly grateful?"
+    },
+    {
+      "title": "Hands That Work",
+      "text": "Thank you for hands that can work, create, hold, and reach. For the ability to build something from nothing.",
+      "prompt": "What have your hands made lately that you're proud of?"
+    },
+    {
+      "title": "Someone Who Listened",
+      "text": "Thank you for the person who listened when I needed to speak. For the one who made space for me.",
+      "prompt": "Who do you feel truly heard by?"
+    },
+    {
+      "title": "The Small Joys",
+      "text": "Thank you for the small joys I almost missed — a warm cup, a good laugh, the feeling of sheets on tired skin.",
+      "prompt": "Name three small things that brought you quiet joy this week."
+    },
+    {
+      "title": "My Mind",
+      "text": "Thank you for a mind that questions, wonders, and seeks. Even when it worries too much, it shows it cares.",
+      "prompt": "What is your mind most curious about right now?"
+    },
+    {
+      "title": "Healing",
+      "text": "Thank you for healing — physical, emotional, invisible. For the wounds that are slowly closing, even when I can't see them.",
+      "prompt": "What part of you is healing right now, even if slowly?"
+    },
+    {
+      "title": "Seasons That Change",
+      "text": "Thank you that seasons change. That nothing stays the same forever — not the hard parts, not the waiting.",
+      "prompt": "What season of life are you in right now?"
+    },
+    {
+      "title": "Laughter",
+      "text": "Thank you for real laughter. The kind that catches you off guard. The kind that reminds you everything is not heavy.",
+      "prompt": "When did you last laugh without holding back?"
+    },
+    {
+      "title": "Hope",
+      "text": "Thank you for hope. For the small voice that says things can be different. For the part of me that keeps getting up.",
+      "prompt": "What are you quietly hoping for right now?"
+    },
+    {
+      "title": "Connection",
+      "text": "Thank you for the connections that sustain me — family, friends, strangers who became more. For every relationship that held.",
+      "prompt": "Who is one person you want to reach out to today?"
+    },
+    {
+      "title": "Time",
+      "text": "Thank you for time. For hours that let me think, rest, build, and change. For every minute that hasn't run out yet.",
+      "prompt": "How do you want to spend your time differently this week?"
+    },
+    {
+      "title": "Nature",
+      "text": "Thank you for the world outside — sky, trees, wind, water. For the simple truth that something bigger is still here.",
+      "prompt": "When did you last stop to notice something in nature?"
+    },
+    {
+      "title": "Creativity",
+      "text": "Thank you for the urge to create — to write, cook, build, draw, dream. For the part of me that still wants to make something.",
+      "prompt": "What do you wish you made more time to create?"
+    },
+    {
+      "title": "Forgiveness",
+      "text": "Thank you for the capacity to forgive — myself and others. For the relief that comes when I stop carrying what isn't mine.",
+      "prompt": "Is there something you're ready to set down today?"
+    },
+    {
+      "title": "Memories",
+      "text": "Thank you for memories that still make me smile. For the ones that remind me: I have been happy before. I will be again.",
+      "prompt": "What's a memory that still warms you when you visit it?"
+    },
+    {
+      "title": "Peace",
+      "text": "Thank you for every moment of genuine peace I have felt. For the proof that it exists. For the certainty it returns.",
+      "prompt": "Where do you feel most at peace?"
+    },
+    {
+      "title": "This Moment",
+      "text": "Thank you for now. For this exact moment — however ordinary or hard — because I am here in it, and that is everything.",
+      "prompt": "If this moment was enough, what would that change?"
+    },
+    {
+      "title": "The Journey",
+      "text": "Thank you for the journey — not the destination, but the path. Every step shaped something in me.",
+      "prompt": "What step have you taken recently that you're proud of?"
+    }
+  ],
+  "AFFIRMATIONS": [
+    "I am allowed to take up space and move at my own pace.",
+    "I do not need to earn rest. Rest is my right.",
+    "I am doing better than I think. I have survived every hard day so far.",
+    "I am not behind. I am exactly where I need to be right now.",
+    "I choose to release what I cannot control and breathe into what I can.",
+    "My feelings are valid. They are not permanent. They are just visiting.",
+    "I am worthy of peace — not because I earned it, but because I exist.",
+    "I am building something real. It takes time. That's okay.",
+    "I give myself permission to not have it all figured out today.",
+    "Every time I breathe and choose to continue, I am being brave.",
+    "I trust that I have what I need to get through today.",
+    "I am not my worries. I am the one noticing them.",
+    "There is strength in gentleness — especially toward myself.",
+    "I am allowed to ask for help. That is wisdom, not weakness.",
+    "Today, I show up as I am. That is more than enough.",
+    "My peace matters. I will protect it.",
+    "I have done hard things before. I can do hard things again.",
+    "I am growing even when it's invisible, even when it's slow.",
+    "I choose to be kind to myself today, in the small moments.",
+    "I am the calm beneath the storm. It is always there.",
+    "I deserve good things — not someday, but now.",
+    "What I feel is real. What I need matters. I will honor both.",
+    "I am not the worst thought I've had about myself.",
+    "Each breath I take is a fresh beginning.",
+    "I let go of the version of today I imagined. This version is enough.",
+    "I release perfectionism. Progress is the goal.",
+    "I am seen. I am loved. I belong here.",
+    "I will not rush my healing. Good things take time.",
+    "Today's difficulties are not permanent. They are passing through.",
+    "I am grateful for the small things — they are not small at all.",
+    "My story is not over. This is just one chapter."
+  ],
+  "CALM_STEPS": [
+    {
+      "title": "Breathe",
+      "sub": "Slow your nervous system down",
+      "type": "breath"
+    },
+    {
+      "title": "Release",
+      "sub": "Let go of tension in your body",
+      "type": "body",
+      "text": "Start at the very top...\n\n• Let your forehead soften\n• Unclench your jaw — let your tongue drop\n• Drop your shoulders away from your ears\n• Open your hands, uncurl your fingers\n• Feel your feet heavy and flat on the floor\n\nNotice how much your body was holding. Let it go."
+    },
+    {
+      "title": "Ground Yourself",
+      "sub": "Come back to this exact moment",
+      "type": "ground",
+      "text": "Look around slowly. Find:\n\n5 things you can see right now\n4 things you can physically feel\n3 sounds you can hear\n2 things you can smell\n1 slow, complete breath\n\nYou are here. This room is real. You are safe inside this moment."
+    },
+    {
+      "title": "Let One Thing Go",
+      "sub": "You don't have to carry everything",
+      "type": "release",
+      "text": "Think of one thing weighing on you right now.\n\nYou don't have to solve it. You don't have to fix it.\n\nJust acknowledge it exists — and then choose, just for these next few minutes, to set it down outside the door.\n\nBreathe in... and on the exhale, let it go."
+    },
+    {
+      "title": "Your Affirmation",
+      "sub": "Read this slowly. Read it again.",
+      "type": "affirm"
+    }
+  ],
+  "NIGHT_STEPS": [
+    {
+      "title": "Set down today.",
+      "body": "Whatever happened today — the mistakes, the unfinished things, the conversations that didn't go right — they don't travel with you into sleep.\n\nSet them outside the door. You can pick them up tomorrow if you need to. Tonight, you rest.",
+      "icon": "🌙"
+    },
+    {
+      "title": "Soften your body.",
+      "body": "Starting from the top:\n\n• Relax your face completely\n• Drop your shoulders\n• Let your stomach soften\n• Feel your legs grow heavy\n• Let your arms rest with no effort\n\nYou are held. You are horizontal. You don't have to do anything.",
+      "icon": "✦"
+    },
+    {
+      "title": "Breathe for sleep.",
+      "body": "The 4-7-8 pattern naturally activates your body's rest mode.\n\nBreath in for 4... hold for 7... breathe out completely for 8.\n\nThree full cycles. Your body already knows what to do.",
+      "icon": "〇",
+      "type": "nightBreath"
+    },
+    {
+      "title": "One gratitude.",
+      "body": "Think of one real thing from today you are grateful for.\n\nIt doesn't have to be big. A warm drink. A moment of quiet. The fact that you made it through.\n\nThank God for it. Hold it in your chest. Let it settle with you.",
+      "icon": "✦"
+    },
+    {
+      "title": "You are allowed rest.",
+      "body": "You are not behind. You did not fail today.\n\nYou showed up — in whatever way you could — and that is enough.\n\nClose your eyes. Your body knows how to sleep. Your mind knows how to let go.\n\nGood night.",
+      "icon": "☽"
+    }
+  ],
+  "MEDITATIONS": [
+    {
+      "id": "morning",
+      "title": "Morning Awakening",
+      "tagline": "Begin your day with intention",
+      "duration": "5 min",
+      "badge": "Morning",
+      "sound": "morning",
+      "img": "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=75",
+      "grad": "rgba(10,30,15,.6)",
+      "segs": [
+        {
+          "text": "Find a comfortable position.\n\nTake a slow breath and settle in.",
+          "s": 12
+        },
+        {
+          "text": "Take a slow breath in through your nose...\n\nAnd let it all the way out.",
+          "s": 14
+        },
+        {
+          "text": "Today is a new beginning.\n\nWhatever yesterday held, it is behind you now.\nThis moment is completely fresh.",
+          "s": 18
+        },
+        {
+          "text": "Breathe in again, and as you do, imagine breathing in clarity.\n\nAnd as you breathe out... release anything that doesn't belong to today.",
+          "s": 18
+        },
+        {
+          "text": "Think of one intention for today.\n\nNot a goal. Not a task.\n\nJust one word — one way you want to move through this day.",
+          "s": 20
+        },
+        {
+          "text": "Let that word settle into your body.\n\nYou don't have to figure out how.\nJust carry it gently.",
+          "s": 18
+        },
+        {
+          "text": "Take one final deep breath...\n\nAnd when you're ready, step into this day.\n\nThis day belongs to you.",
+          "s": 16
+        }
+      ]
+    },
+    {
+      "id": "anxiety",
+      "title": "Anxiety Relief",
+      "tagline": "Immediate calm when you need it",
+      "duration": "4 min",
+      "badge": "Anytime",
+      "sound": "rain",
+      "img": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=75",
+      "grad": "rgba(10,20,15,.65)",
+      "segs": [
+        {
+          "text": "You're here. That took courage.\n\nLet's start with just one breath.",
+          "s": 12
+        },
+        {
+          "text": "Breathe in slowly... 2... 3... 4...\n\nAnd out slowly... 2... 3... 4... 5... 6.\n\nDo that again.",
+          "s": 18
+        },
+        {
+          "text": "Your nervous system just received a signal:\n\nWe are safe. We are here. We are okay.",
+          "s": 14
+        },
+        {
+          "text": "Whatever you're feeling right now — it is not permanent.\n\nIt is a wave. You are not drowning. You are floating.",
+          "s": 16
+        },
+        {
+          "text": "Look at one thing around you right now.\n\nSomething solid. Something real.\n\nYou are in a safe place.",
+          "s": 16
+        },
+        {
+          "text": "Take another slow breath...\n\nAnd say quietly to yourself:\n\n\"This will pass. It always does.\"",
+          "s": 18
+        },
+        {
+          "text": "You are more capable than your anxiety believes.\n\nYou have gotten through every hard moment before this one.\n\nYou will get through this one too.",
+          "s": 20
+        }
+      ]
+    },
+    {
+      "id": "stillness",
+      "title": "Inner Stillness",
+      "tagline": "Find the quiet beneath the noise",
+      "duration": "5 min",
+      "badge": "Anytime",
+      "sound": "bowl",
+      "img": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=75",
+      "grad": "rgba(8,18,35,.65)",
+      "segs": [
+        {
+          "text": "Let everything go quiet for a moment.\n\nYou don't have to figure anything out right now.",
+          "s": 14
+        },
+        {
+          "text": "Soften your gaze and let your shoulders drop.\n\nBreathe slowly.\n\nIn... and out. Calm and easy.",
+          "s": 16
+        },
+        {
+          "text": "Beneath all the thoughts, beneath all the noise...\n\nthere is a stillness that has always been there.\n\nIt belongs to you.",
+          "s": 18
+        },
+        {
+          "text": "You don't have to earn access to this stillness.\n\nYou don't have to be perfect to feel it.\n\nIt's already here. It's always here.",
+          "s": 18
+        },
+        {
+          "text": "Let your thoughts come and go like clouds.\n\nYou are not the cloud.\n\nYou are the sky.",
+          "s": 16
+        },
+        {
+          "text": "Breathe into this feeling.\n\nThis is your natural state.\n\nThis is who you are beneath everything.",
+          "s": 16
+        },
+        {
+          "text": "Carry this quiet with you.\n\nNot as something fragile — but as something that cannot be taken.\n\nIt's yours.",
+          "s": 18
+        }
+      ]
+    },
+    {
+      "id": "gratitude",
+      "title": "Heart of Gratitude",
+      "tagline": "Open your heart to what is good",
+      "duration": "5 min",
+      "badge": "Anytime",
+      "sound": "chime",
+      "img": "https://images.unsplash.com/photo-1439405326854-014607f694d7?w=800&q=75",
+      "grad": "rgba(30,15,8,.6)",
+      "segs": [
+        {
+          "text": "Place one hand gently on your heart.\n\nFeel it beating. That rhythm has never stopped for you.",
+          "s": 14
+        },
+        {
+          "text": "Take a breath and with it, let gratitude begin to move through you.\n\nNot forced. Not performed.\n\nJust allowed.",
+          "s": 16
+        },
+        {
+          "text": "Think of one person in your life who has loved you — even imperfectly.\n\nLet yourself feel that love right now.",
+          "s": 18
+        },
+        {
+          "text": "Think of one moment this week that was good.\n\nIt doesn't have to be big.\n\nA warmth. A laugh. A small mercy.",
+          "s": 16
+        },
+        {
+          "text": "Thank God for it.\n\nNot because everything is perfect.\n\nBut because good things are real, and they deserve to be seen.",
+          "s": 18
+        },
+        {
+          "text": "Let your chest fill with that feeling.\n\nGratitude is not just an emotion.\n\nIt is a way of seeing.",
+          "s": 16
+        },
+        {
+          "text": "Take a deep breath in...\n\nAnd breathe out slowly.\n\nYou have so much inside you. So much that is real and good.",
+          "s": 18
+        }
+      ]
+    },
+    {
+      "id": "evening",
+      "title": "Evening Wind-Down",
+      "tagline": "Release the day with grace",
+      "duration": "6 min",
+      "badge": "Evening",
+      "sound": "ocean",
+      "img": "https://images.unsplash.com/photo-1439405326854-014607f694d7?w=800&q=75",
+      "grad": "rgba(25,12,5,.65)",
+      "segs": [
+        {
+          "text": "The day is done.\n\nYou made it. Whatever it held — you made it through.",
+          "s": 14
+        },
+        {
+          "text": "Take a slow breath in...\n\nAnd as you breathe out, let the day begin to soften.",
+          "s": 14
+        },
+        {
+          "text": "You did what you could today.\n\nSome things went well. Some didn't.\n\nAll of it was enough.",
+          "s": 16
+        },
+        {
+          "text": "Think of one thing that went right today.\n\nEven something small.\n\nHold it for a moment.",
+          "s": 16
+        },
+        {
+          "text": "Now think of something you're setting down tonight.\n\nA worry. A regret. A conversation that still feels unfinished.\n\nYou don't have to carry it to bed.",
+          "s": 20
+        },
+        {
+          "text": "Breathe in...\n\nAnd breathe out, releasing it completely.\n\nTomorrow can hold what it needs to hold.",
+          "s": 16
+        },
+        {
+          "text": "Let your body grow heavy.\n\nLet your mind grow quiet.\n\nYou've done enough for today.\n\nRest now.",
+          "s": 18
+        },
+        {
+          "text": "Good night.\n\nThank God for this day.\n\nFor the breath that carried you through it.",
+          "s": 16
+        }
+      ]
+    },
+    {
+      "id": "sleep",
+      "title": "Deep Sleep Journey",
+      "tagline": "Drift gently into rest",
+      "duration": "8 min",
+      "badge": "Night",
+      "sound": "delta",
+      "img": "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=75",
+      "grad": "rgba(3,3,18,.7)",
+      "segs": [
+        {
+          "text": "You are safe.\n\nYou are held.\n\nYou are allowed to rest completely.",
+          "s": 14
+        },
+        {
+          "text": "Let your body grow heavy.\n\nLet your breath slow.\n\nThere is nothing you need to do right now.",
+          "s": 16
+        },
+        {
+          "text": "Breathe in for 4...\n\nHold for 7...\n\nBreathe out for 8...",
+          "s": 20
+        },
+        {
+          "text": "Your body is growing heavier with each breath.\n\nYour muscles are letting go one by one.\n\nYou don't have to hold anything.",
+          "s": 18
+        },
+        {
+          "text": "Let your thoughts drift by like gentle clouds.\n\nYou don't need to follow them.\n\nJust watch them pass.",
+          "s": 18
+        },
+        {
+          "text": "You are safe in this moment.\n\nThe world will continue while you sleep.\n\nYou are allowed to leave it for a while.",
+          "s": 18
+        },
+        {
+          "text": "Feel the weight of your body being held.\n\nYou don't have to hold yourself up anymore.\n\nLet go completely.",
+          "s": 18
+        },
+        {
+          "text": "Breathe in gently...\n\nAnd breathe out... slowly... completely...\n\nSleep is coming.",
+          "s": 20
+        },
+        {
+          "text": "Thank God for this rest.\n\nFor this quiet.\n\nFor this safe place to lay your head.\n\nGood night.",
+          "s": 20
+        }
+      ]
+    }
+  ],
+  "EMOTIONS": [
+    {
+      "id": "overwhelmed",
+      "label": "Overwhelmed",
+      "sub": "Too much at once"
+    },
+    {
+      "id": "stressed",
+      "label": "Stressed",
+      "sub": "Tension, pressure building"
+    },
+    {
+      "id": "tired",
+      "label": "Mentally Tired",
+      "sub": "Drained, foggy, flat"
+    },
+    {
+      "id": "calm",
+      "label": "Calm",
+      "sub": "Just checking in"
+    }
+  ],
+  "CRISIS_DATA": [
+    {
+      "t": "Stop.",
+      "b": "Whatever is happening — stop. Don't try to fix it right now. Just stop moving for one moment."
+    },
+    {
+      "t": "Breathe.",
+      "b": "Put your hand on your chest. Feel it rise. Breathe in through your nose... slowly out through your mouth. Again."
+    },
+    {
+      "t": "Name it.",
+      "b": "What are you feeling right now? Say it out loud or in your mind.\n\n\"I feel ___.\" Naming it is the first step to moving through it."
+    },
+    {
+      "t": "You are safe.",
+      "b": "This feeling is not permanent. You have felt this before and come through it. You are stronger than this moment."
+    },
+    {
+      "t": "One step.",
+      "b": "You don't need to fix everything. Just one tiny thing: drink water, step outside, text someone.\n\nOne step is enough."
+    }
+  ],
+  "JPROMPTS": [
+    "What happened today that I want to remember?",
+    "How did I feel today — really?",
+    "What am I grateful for right now, even if small?",
+    "What's one thing I'd tell myself tomorrow morning?"
+  ],
+  "LEARN_DATA": [
+    {
+      "id": 1,
+      "e": "🌊",
+      "t": "Why Your Mind Feels Overwhelmed",
+      "m": "3 min",
+      "c": [
+        "Your brain isn't broken. It's overwhelmed. There's a big difference.",
+        "Every day, your brain processes thousands of pieces of information — emails, decisions, worries. It's doing enormous invisible work.",
+        "When things pile up, your brain's alarm system fires. It doesn't care about logic. It just sees pressure.",
+        "That feeling of 'I can't think straight'? That's your alarm drowning out your rational mind.",
+        "The solution isn't to think harder. It's to slow down just enough so your calm mind can come back online.",
+        "You are not too much. You are overloaded. And overloaded systems just need to pause."
+      ]
+    },
+    {
+      "id": 2,
+      "e": "⚡",
+      "t": "What Anxiety Actually Is",
+      "m": "4 min",
+      "c": [
+        "Anxiety isn't weakness. It's your brain being too good at its job.",
+        "Your brain runs a simulation — asking 'what could go wrong?' Not because something is wrong, but to protect you.",
+        "It can't tell the difference between a real danger and an email you're nervous about. Both trigger the same alarm.",
+        "So your heart races. Your chest tightens. Your thoughts loop. None of that means something bad is happening.",
+        "The way out isn't to fight it. It's to send your brain a calm signal: we're safe. We're here.",
+        "Anxiety is a messenger. Not a verdict."
+      ]
+    },
+    {
+      "id": 3,
+      "e": "🌿",
+      "t": "How to Calm Your Thoughts Fast",
+      "m": "3 min",
+      "c": [
+        "When thoughts are racing, the worst thing you can do is fight them.",
+        "Name what you feel specifically — 'I feel scared that I'm going to fail.' Naming activates your rational mind.",
+        "Breathe out longer than you breathe in. Try 4 counts in, 6 counts out. Your nervous system has a brake pedal.",
+        "Look around and name 3 real things you can see. This pulls you out of your head and back into the room.",
+        "Say one true thing: 'I am here. This feeling will pass. I have made it through hard things before.'",
+        "Done fully, it takes 60 seconds. The goal is to slow down enough that you're driving again."
+      ]
+    },
+    {
+      "id": 4,
+      "e": "🔄",
+      "t": "When Your Mind Won't Stop Looping",
+      "m": "4 min",
+      "c": [
+        "You've been in bed for an hour. Your brain won't stop. The same thoughts, over and over.",
+        "Your brain is stuck in problem-solving mode — running the same loop hoping to find the answer.",
+        "The way to break the loop isn't to solve the problem. It's to give your brain something different to do.",
+        "Write down every thought. Your brain will stop running it because it feels 'stored.'",
+        "Change your physical position. Stand up. Splash water on your face.",
+        "Accept you might not solve it tonight. Some things need sleep, not more thinking."
+      ]
+    }
+  ],
+  "RESP": {
+    "overwhelmed": {
+      "msg": "You don't have to solve everything right now.",
+      "sub": "One breath. One step. That's all this moment needs.",
+      "btn": "Start 5-Step Reset",
+      "next": "reset5"
+    },
+    "stressed": {
+      "msg": "Stress means you care about something.",
+      "sub": "Let's give that energy somewhere to land.",
+      "btn": "Start 5-Step Reset",
+      "next": "reset5"
+    },
+    "tired": {
+      "msg": "Your mind has worked hard today.",
+      "sub": "You have permission to rest. Right now.",
+      "btn": "Start Gentle Reset",
+      "next": "reset5"
+    },
+    "calm": {
+      "msg": "Good. Let's protect and deepen that.",
+      "sub": "A moment of calm is worth honoring.",
+      "btn": "Open Today's Gratitude",
+      "next": "gratitude"
+    }
+  }
+}
